@@ -1,5 +1,7 @@
+
 # Django auto-prefetching
-* NOTICE: THIS PROJECT IS A WORK IN PROGRESS, AND IS NOT PUBLISHED TO PYPI YET *
+
+**NOTICE: THIS PROJECT IS A WORK IN PROGRESS, AND IS NOT PUBLISHED TO PYPI YET**
 
 Automatic prefetching of related objects for Django Rest Framework.
 
@@ -12,10 +14,11 @@ Inside your ViewSets `get_queryset` add the following code:
 ```
 
 # Unresolved issues
+
 - If you forget to add `many=True` to a serializer that has the reverse side of the ForeignKey we calculate the wrong prefetch_related
 fields and we get an error. We can't catch this error early because it's only thrown when the queryset is evaluated
 - We can't prefetch anything that's accessed in serializer method fields.
 
 
-LICENSE:
+# LICENSE:
 MIT
