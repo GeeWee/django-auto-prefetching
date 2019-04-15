@@ -1,0 +1,920 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoTestManager">
+    <enabled-run-configurations>
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django_auto_fetching.tests.TestDeeplyNested.test_we_can_serialize_deeply_nested_without_explicit_serializers" />
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django_auto_fetching.tests.ForeignKeyTest.test_it_prefetches_using_nested_serializers" />
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django_auto_fetching.tests.ForeignKeyTest.test_it_prefetches_foreign_key_relations_when_owning_and_source_is_set" />
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django-auto-fetching.tests.ForeignKeyTest.test_it_prefetches_foreign_key_relations_when_owning" />
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django_auto_fetching.tests.TestManyToMany.test_it_prefetches_many_to_many_relationships_on_owning_side" />
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django_auto_fetching.tests.TestOneToOne.test_it_prefetches_foreign_key_relations_from_owning_side" />
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django_auto_fetching.tests.TestManyToOne.test_it_prefetches_many_to_one_relationships" />
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django_auto_fetching.tests.TestManyToOne.test_it_prefetches_foreign_key_relations_from_reverse_side_with_serializer" />
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django_auto_fetching.tests.TestManyToMany.test_it_prefetches_many_to_many_relationships_on_owning_side_with_full_representation" />
+      <run-configuration type="DjangoTestsConfigurationType" name="Test: django_auto_fetching.tests.ForeignKeyTest.test_it_prefetches_using_nested_serializers_when_source_is_changed" />
+    </enabled-run-configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="320f2a2b-f92c-4a7e-bbdb-2143df50b47f" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestManyToMany_test_it_prefetches_many_to_many_relationships_on_reverse_side_with_full_representation.coverage" NAME="Test: django_auto_fetching.tests.TestManyToMany.test_it_prefetches_many_to_many_relationships_on_reverse_side_with_full_representation Coverage Results" MODIFIED="1555350337580" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_ForeignKeyTest_test_it_prefetches_when_using_dotted_property_access.coverage" NAME="Test: django_auto_fetching.tests.ForeignKeyTest.test_it_prefetches_when_using_dotted_property_access Coverage Results" MODIFIED="1555345266189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_ForeignKeyTest_test_it_prefetches_foreign_key_relations_when_owning.coverage" NAME="Test: django-auto-fetching.tests.ForeignKeyTest.test_it_prefetches_foreign_key_relations_when_owning Coverage Results" MODIFIED="1555345978282" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestManyToMany_test_it_prefetches_many_to_many_relationships_on_owning_side.coverage" NAME="Test: django_auto_fetching.tests.TestManyToMany.test_it_prefetches_many_to_many_relationships_on_owning_side Coverage Results" MODIFIED="1555350176224" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_ForeignKeyTest_test_it_prefetches_using_nested_serializers_when_source_is_changed.coverage" NAME="Test: django_auto_fetching.tests.ForeignKeyTest.test_it_prefetches_using_nested_serializers_when_source_is_changed Coverage Results" MODIFIED="1555345244485" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key.coverage" NAME="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key Coverage Results" MODIFIED="1555353489828" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestOneToOne_test_it_prefetches_foreign_key_relations_from_reverse_side_with_serializer.coverage" NAME="Test: django_auto_fetching.tests.TestOneToOne.test_it_prefetches_foreign_key_relations_from_reverse_side_with_serializer Coverage Results" MODIFIED="1555348569722" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_NoRelationsTest.coverage" NAME="Test: django_auto_fetching.tests.NoRelationsTest Coverage Results" MODIFIED="1555352012139" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestOneToOne_test_it_prefetches_foreign_key_relations_from_owning_side.coverage" NAME="Test: django_auto_fetching.tests.TestOneToOne.test_it_prefetches_foreign_key_relations_from_owning_side Coverage Results" MODIFIED="1555347630515" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested.coverage" NAME="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested Coverage Results" MODIFIED="1555352814739" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestManyToOne.coverage" NAME="Test: django_auto_fetching.tests.TestManyToOne Coverage Results" MODIFIED="1555352049857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestManyToMany.coverage" NAME="Test: django_auto_fetching.tests.TestManyToMany Coverage Results" MODIFIED="1555352044286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_ForeignKeyTest_test_it_prefetches_using_nested_serializers.coverage" NAME="Test: django_auto_fetching.tests.ForeignKeyTest.test_it_prefetches_using_nested_serializers Coverage Results" MODIFIED="1555344858631" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestOneToMany.coverage" NAME="Test: django_auto_fetching.tests.TestOneToMany Coverage Results" MODIFIED="1555352040181" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_ForeignKeyTest_test_it_prefetches_foreign_key_relations_when_owning_and_source_is_set.coverage" NAME="Test: django_auto_fetching.tests.ForeignKeyTest.test_it_prefetches_foreign_key_relations_when_owning_and_source_is_set Coverage Results" MODIFIED="1555343932465" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestOneToOne.coverage" NAME="Test: django_auto_fetching.tests.TestOneToOne Coverage Results" MODIFIED="1555352052296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_NoRelationsTest_test_that_it_fetches_without_relations_properly.coverage" NAME="Test: django_auto_fetching.tests.NoRelationsTest.test_that_it_fetches_without_relations_properly Coverage Results" MODIFIED="1555352032276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestManyToOne_test_it_prefetches_foreign_key_relations_from_reverse_side_with_serializer.coverage" NAME="Test: django_auto_fetching.tests.TestManyToOne.test_it_prefetches_foreign_key_relations_from_reverse_side_with_serializer Coverage Results" MODIFIED="1555349111479" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestDeeplyNested_test_we_can_serialize_deeply_nested_with_explicit_serializers.coverage" NAME="Test: django_auto_fetching.tests.TestDeeplyNested.test_we_can_serialize_deeply_nested_with_explicit_serializers Coverage Results" MODIFIED="1555351900350" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestManyToMany_test_it_prefetches_many_to_many_relationships_on_reverse_side_with_only_primary_keys.coverage" NAME="Test: django_auto_fetching.tests.TestManyToMany.test_it_prefetches_many_to_many_relationships_on_reverse_side_with_only_primary_keys Coverage Results" MODIFIED="1555350235992" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestManyToOne_test_with_nested.coverage" NAME="Test: django_auto_fetching.tests.TestManyToOne.test_with_nested Coverage Results" MODIFIED="1555352498052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestManyToMany_test_it_prefetches_many_to_many_relationships_on_owning_side_with_full_representation.coverage" NAME="Test: django_auto_fetching.tests.TestManyToMany.test_it_prefetches_many_to_many_relationships_on_owning_side_with_full_representation Coverage Results" MODIFIED="1555350319604" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestOneToOne_test_it_prefetches_foreign_key_relations_from_reverse_side.coverage" NAME="Test: django_auto_fetching.tests.TestOneToOne.test_it_prefetches_foreign_key_relations_from_reverse_side Coverage Results" MODIFIED="1555347709805" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$tests.coverage" NAME="tests Coverage Results" MODIFIED="1555351950329" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test_project" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestDeeplyNested_test_we_can_serialize_deeply_nested_without_explicit_serializers.coverage" NAME="Test: django_auto_fetching.tests.TestDeeplyNested.test_we_can_serialize_deeply_nested_without_explicit_serializers Coverage Results" MODIFIED="1555351686503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestDeeplyNested.coverage" NAME="Test: django_auto_fetching.tests.TestDeeplyNested Coverage Results" MODIFIED="1555352047617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/auto_prefetching$Test__django_auto_fetching_tests_TestManyToOne_test_it_prefetches_many_to_one_relationships.coverage" NAME="Test: django_auto_fetching.tests.TestManyToOne.test_it_prefetches_many_to_one_relationships Coverage Results" MODIFIED="1555352100902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="DockManager">
+    <window id="4">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/test_project/top_level_serializer.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="112">
+                    <caret line="11" selection-start-line="11" selection-end-line="11" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/test_project/models.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="80">
+                    <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/django_auto_fetching/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="3" selection-start-column="3" selection-end-column="3" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/django_auto_fetching/tests.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="203">
+              <caret line="276" column="12" selection-start-line="276" selection-start-column="4" selection-end-line="276" selection-end-column="12" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+                <element signature="e#913#3815#0" />
+                <element signature="e#5375#7142#0" />
+                <element signature="e#6129#6930#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="48">
+              <caret line="3" column="66" selection-start-line="3" selection-start-column="66" selection-end-line="3" selection-end-column="66" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/relations.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="469" column="6" selection-start-line="469" selection-start-column="6" selection-end-line="469" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test_project/nested_serializer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="192">
+              <caret line="12" selection-start-line="12" selection-end-line="16" selection-end-column="15" />
+              <folding>
+                <element signature="e#0#54#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/django/db/models/query.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="299">
+              <caret line="414" column="8" selection-start-line="414" selection-start-column="8" selection-end-line="414" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/serializers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="281">
+              <caret line="1006" column="32" selection-start-line="1006" selection-start-column="16" selection-end-line="1006" selection-end-column="32" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/viewsets.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="200" column="47" lean-forward="true" selection-start-line="200" selection-start-column="47" selection-end-line="200" selection-end-column="47" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/generics.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="281">
+              <caret line="109" column="52" selection-start-line="109" selection-start-column="32" selection-end-line="109" selection-end-column="52" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test_project/child_a_serializer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="528">
+              <caret line="33" column="31" selection-start-line="33" selection-start-column="31" selection-end-line="33" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#38#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>django_auto_fetching</find>
+      <find>self.request</find>
+      <find>self.fields</find>
+      <find>data</find>
+      <find>self.data</find>
+      <find>self.</find>
+      <find>modelserializer</find>
+      <find>ModelSerializer</find>
+      <find>class Model</find>
+      <find>to_representation</find>
+      <find>childASerializer</find>
+      <find>_readable_fields</find>
+      <find>get_seri</find>
+      <find>get_seriali</find>
+      <find>serializer</find>
+      <find>serializer_class</find>
+      <find>get_serializer_class</find>
+    </findStrings>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/django-auto-fetching/wsgi.py" />
+        <option value="$PROJECT_DIR$/Pipfile" />
+        <option value="$PROJECT_DIR$/django-auto-fetching/apps.py" />
+        <option value="$PROJECT_DIR$/django-auto-fetching/settings.py" />
+        <option value="$PROJECT_DIR$/django-auto-fetching/tests.py" />
+        <option value="$PROJECT_DIR$/.env" />
+        <option value="$PROJECT_DIR$/test_project/serializers.py" />
+        <option value="$PROJECT_DIR$/test_project/child_b_serializers.py" />
+        <option value="$PROJECT_DIR$/test_project/top_level_serializer.py" />
+        <option value="$PROJECT_DIR$/test_project/many_to_many_serializer.py" />
+        <option value="$PROJECT_DIR$/test_project/child_a_serializer.py" />
+        <option value="$PROJECT_DIR$/test_project/nested_serializer.py" />
+        <option value="$PROJECT_DIR$/test_project/models.py" />
+        <option value="$PROJECT_DIR$/django_auto_fetching/tests.py" />
+        <option value="$PROJECT_DIR$/README" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-7" />
+    <option name="y" value="-8" />
+    <option name="width" value="1257" />
+    <option name="height" value="1056" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="auto-prefetching" type="b2602c69:ProjectViewProjectNode" />
+              <item name="django-prefetching" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="auto-prefetching" type="b2602c69:ProjectViewProjectNode" />
+              <item name="django-prefetching" type="462c0819:PsiDirectoryNode" />
+              <item name="django_auto_fetching" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="auto-prefetching" type="b2602c69:ProjectViewProjectNode" />
+              <item name="django-prefetching" type="462c0819:PsiDirectoryNode" />
+              <item name="test_project" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.env" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Wengel\PycharmProjects\django-prefetching\test_project" />
+      <recent name="C:\Users\Wengel\PycharmProjects\django-prefetching\django-auto-fetching" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Django tests.Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key">
+    <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested" type="DjangoTestsConfigurationType" temporary="true">
+      <module name="auto-prefetching" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Wengel\.virtualenvs\django-prefetching-8KahrOY9\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="TARGET" value="django_auto_fetching.tests.TestDeeplyNested.test_with_nested" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" type="DjangoTestsConfigurationType" temporary="true">
+      <module name="auto-prefetching" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Wengel\.virtualenvs\django-prefetching-8KahrOY9\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="TARGET" value="django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test: django_auto_fetching.tests.TestManyToOne.test_it_prefetches_many_to_one_relationships" type="DjangoTestsConfigurationType" temporary="true">
+      <module name="auto-prefetching" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Wengel\.virtualenvs\django-prefetching-8KahrOY9\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="TARGET" value="django_auto_fetching.tests.TestManyToOne.test_it_prefetches_many_to_one_relationships" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test: django_auto_fetching.tests.TestManyToOne.test_with_nested" type="DjangoTestsConfigurationType" temporary="true">
+      <module name="auto-prefetching" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Wengel\.virtualenvs\django-prefetching-8KahrOY9\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="TARGET" value="django_auto_fetching.tests.TestManyToOne.test_with_nested" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test: django_auto_fetching.tests.TestOneToOne" type="DjangoTestsConfigurationType" temporary="true">
+      <module name="auto-prefetching" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Wengel\.virtualenvs\django-prefetching-8KahrOY9\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="TARGET" value="django_auto_fetching.tests.TestOneToOne" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="DjangoTestsConfigurationType">
+      <module name="auto-prefetching" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Wengel\.virtualenvs\django-prefetching-8KahrOY9\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="TARGET" value="" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Python.DjangoServer" factoryName="Django server">
+      <module name="auto-prefetching" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Wengel\.virtualenvs\django-prefetching-8KahrOY9\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="untitled1" type="Python.DjangoServer" factoryName="Django server">
+      <module name="auto-prefetching" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Django server.untitled1" />
+      <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestOneToOne" />
+      <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestManyToOne.test_it_prefetches_many_to_one_relationships" />
+      <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestManyToOne.test_with_nested" />
+      <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested" />
+      <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" />
+        <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested" />
+        <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestManyToOne.test_with_nested" />
+        <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestManyToOne.test_it_prefetches_many_to_one_relationships" />
+        <item itemvalue="Django tests.Test: django_auto_fetching.tests.TestOneToOne" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="320f2a2b-f92c-4a7e-bbdb-2143df50b47f" name="Default Changelist" comment="" />
+      <created>1555338914348</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1555338914348</updated>
+      <workItem from="1555338987967" duration="317000" />
+      <workItem from="1555339374766" duration="14443000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 33m 44s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 33m 54s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 34m 09s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 34m 30s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 34m 38s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 35m 10s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 36m 57s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 37m 32s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 37m 40s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+    <history-entry file="Test__django_auto_fetching_tests_TestDeeplyNested_test_with_nested_foreign_key - 2019.04.15 at 20h 38m 11s.xml">
+      <configuration name="Test: django_auto_fetching.tests.TestDeeplyNested.test_with_nested_foreign_key" configurationId="DjangoTestsConfigurationType" />
+    </history-entry>
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="14760000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25266525" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
+      <window_info anchor="bottom" x="-1085" y="31" width="1084" height="1008" id="Run" order="2" type="WINDOWED" visible="true" weight="0.32936078" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.28060672" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.32936078" />
+      <window_info anchor="bottom" id="Python Console" order="12" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="3" />
+      <window_info anchor="right" id="Database" order="4" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/serializers.py</url>
+          <line>261</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/serializers.py</url>
+          <line>511</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/django_auto_fetching/tests.py</url>
+          <line>347</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>serializer.fields.fields</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>serializer.fields.fields.items()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>serializer.fields.fields.entries()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>serializer.fields</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>serializer.fields.values()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>serializer._readable_fields</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.fields.values()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.fields</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.get_fields()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/django_auto_fetching/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/django_auto_fetching/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/manage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="9" column="68" selection-start-line="9" selection-start-column="68" selection-end-line="9" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pipfile.lock">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="62" column="32" lean-forward="true" selection-start-line="62" selection-start-column="32" selection-end-line="62" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pipfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="8" column="5" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/django_auto_fetching/wsgi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+          <folding>
+            <element signature="e#225#234#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/django_auto_fetching/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/mixins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="395">
+          <caret line="40" lean-forward="true" selection-start-line="40" selection-end-line="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="156">
+          <caret line="470" column="8" selection-start-line="470" selection-start-column="8" selection-end-line="470" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/unittest/case.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="612" column="61" lean-forward="true" selection-start-line="612" selection-start-column="61" selection-end-line="612" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.env">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="52" selection-start-column="52" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/pprint.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="46" column="32" selection-start-line="46" selection-start-column="32" selection-end-line="46" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_project/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/django/test/testcases.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="1057" column="8" selection-start-line="1057" selection-start-column="8" selection-end-line="1057" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_project/child_b_serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="45" column="17" selection-start-line="45" selection-start-column="17" selection-end-line="45" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/django_auto_fetching/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="3" selection-start-column="3" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/django/db/models/query.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="414" column="8" selection-start-line="414" selection-start-column="8" selection-end-line="414" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/relations.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="469" column="6" selection-start-line="469" selection-start-column="6" selection-end-line="469" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_project/many_to_many_serializer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_project/child_a_serializer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="33" column="31" selection-start-line="33" selection-start-column="31" selection-end-line="33" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_project/nested_serializer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="12" selection-start-line="12" selection-end-line="16" selection-end-column="15" />
+          <folding>
+            <element signature="e#0#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_project/top_level_serializer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_project/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/django_auto_fetching/tests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="276" column="12" selection-start-line="276" selection-start-column="4" selection-end-line="276" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+            <element signature="e#913#3815#0" />
+            <element signature="e#5375#7142#0" />
+            <element signature="e#6129#6930#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="1006" column="32" selection-start-line="1006" selection-start-column="16" selection-end-line="1006" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/generics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="109" column="52" selection-start-line="109" selection-start-column="32" selection-end-line="109" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/django-prefetching-8KahrOY9/Lib/site-packages/rest_framework/viewsets.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="200" column="47" lean-forward="true" selection-start-line="200" selection-start-column="47" selection-end-line="200" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="3" column="66" selection-start-line="3" selection-start-column="66" selection-end-line="3" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
