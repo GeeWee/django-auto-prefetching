@@ -1,0 +1,11 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "django_auto_fetching"
+author = "Gustav Wengel"
+author-email = "gustavwengel@gmail.com"
+home-page = "https://github.com/GeeWee/django-auto-prefetching"
+classifiers = ["License :: OSI Approved :: MIT License"]
+

@@ -276,14 +276,6 @@ class TestOneToOne(TestCase):
 
 def prefetch(queryset, serializer: Type[ModelSerializer]):
     select_related, prefetch_related = _prefetch(serializer)
-
-    print('FINAL PREFETCHES')
-    print('    SELECT RELATED:')
-    pprint(sorted(select_related), indent=4)
-
-    print('    PREFETCH RELATED:')
-    pprint(sorted(prefetch_related), indent=4)
-
     try:
         return queryset.select_related(*select_related).prefetch_related(*prefetch_related)
     except FieldError as e:
