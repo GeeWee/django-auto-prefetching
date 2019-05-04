@@ -6,14 +6,16 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('test_project', '0008_auto_20190415_2003'),
-    ]
+    dependencies = [("test_project", "0008_auto_20190415_2003")]
 
     operations = [
         migrations.AlterField(
-            model_name='deeplynestedchild',
-            name='parent',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='child', to='test_project.DeeplyNestedParent'),
-        ),
+            model_name="deeplynestedchild",
+            name="parent",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="child",
+                to="test_project.DeeplyNestedParent",
+            ),
+        )
     ]

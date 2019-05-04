@@ -6,20 +6,30 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('test_project', '0006_singlechildtoy'),
-    ]
+    dependencies = [("test_project", "0006_singlechildtoy")]
 
     operations = [
         migrations.CreateModel(
-            name='ParentCar',
+            name="ParentCar",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                )
             ],
         ),
         migrations.AddField(
-            model_name='deeplynestedparent',
-            name='cars',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='test_project.ParentCar'),
+            model_name="deeplynestedparent",
+            name="cars",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="test_project.ParentCar",
+            ),
         ),
     ]

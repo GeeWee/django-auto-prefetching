@@ -5,15 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('test_project', '0001_initial'),
-    ]
+    dependencies = [("test_project", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='childb',
-            name='childB_text',
-            field=models.TextField(default='sfsdf'),
+            model_name="childb",
+            name="childB_text",
+            field=models.TextField(default="sfsdf"),
             preserve_default=False,
-        ),
+        )
     ]

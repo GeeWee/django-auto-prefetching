@@ -1,32 +1,39 @@
 from rest_framework.serializers import ModelSerializer
 
-from test_project.models import DeeplyNestedParent, DeeplyNestedChild, DeeplyNestedChildren, GrandKids
+from test_project.models import (
+    DeeplyNestedParent,
+    DeeplyNestedChild,
+    DeeplyNestedChildren,
+    GrandKids,
+)
 
 
 class DeeplyNestedParentSerializer(ModelSerializer):
     class Meta:
         model = DeeplyNestedParent
-        fields = ['child', 'children_set', 'car']
-        depth=2
+        fields = ["child", "children_set", "car"]
+        depth = 2
 
 
 class DeeplyNestedChildSerializer(ModelSerializer):
     class Meta:
         model = DeeplyNestedChild
-        fields = ['toy', 'parent']
-        depth=1
+        fields = ["toy", "parent"]
+        depth = 1
+
 
 class GrandKidSerializer(ModelSerializer):
     class Meta:
-        fields = ['id', 'parent']
+        fields = ["id", "parent"]
         model = GrandKids
 
+
 class DeeplyNestedChildrenSerializer(ModelSerializer):
-    grandkids = GrandKidSerializer(source='children')
+    grandkids = GrandKidSerializer(source="children")
 
     class Meta:
         model = DeeplyNestedChildren
-        fields = ['toys', 'grandkids']
+        fields = ["toys", "grandkids"]
 
 
 class ExplicitDeeplyNestedParentSerializer(ModelSerializer):
@@ -35,5 +42,5 @@ class ExplicitDeeplyNestedParentSerializer(ModelSerializer):
 
     class Meta:
         model = DeeplyNestedParent
-        fields = ['child', 'children_set', 'car']
-        depth=2
+        fields = ["child", "children_set", "car"]
+        depth = 2
