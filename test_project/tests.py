@@ -211,14 +211,14 @@ class TestDeeplyNested(TestCase):
                 model = DeeplyNestedParent
                 fields = ['children', 'car']
 
-        data = _run_test(ParentSerializer, DeeplyNestedParent, sql_queries=2)
+        data = _run_test(ParentSerializer, DeeplyNestedParent, sql_queries=3)
 
     def test_we_can_serialize_deeply_nested_without_explicit_serializers(self):
         # Car is gotten via select_related
         # Query one: Fetch parent
         # Query two: Fetch DeeplyNestedChild
         # Query three: Fetch DeeplyNestedChildren
-        data = _run_test(DeeplyNestedParentSerializer, DeeplyNestedParent, sql_queries=3)
+        data = _run_test(DeeplyNestedParentSerializer, DeeplyNestedParent, sql_queries=2)
 
 
 class TestManyToOne(TestCase):
