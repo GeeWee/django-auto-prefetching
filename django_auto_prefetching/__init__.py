@@ -2,12 +2,15 @@
 A package for automatic prefetching of data with select_related and prefetch_related in Django and django-rest-framework
 """
 import inspect
+import logging
 from typing import Type, Union
 
 from django.core.exceptions import FieldError
 from rest_framework.relations import RelatedField, ManyRelatedField
 from rest_framework.serializers import ModelSerializer, BaseSerializer, ListSerializer
 
+logger = logging.getLogger('django-auto-prefetching')
+logger.addHandler(logging.NullHandler())
 
 class AutoPrefetchViewSetMixin:
     def get_queryset(self):
@@ -41,16 +44,16 @@ def _prefetch(
     prepend = f"{path}__" if path is not None else ""
     class_name = getattr(serializer, "__name__", serializer.__class__.__name__)
 
-    print(
-        f'{" " * indentation}LOOKING AT SERIALIZER:', class_name, "from path: ", prepend
+    logger.debug(
+        f'{" " * indentation}LOOKING AT SERIALIZER: {class_name} from path: {prepend}'
     )
 
     select_related = set()
     prefetch_related = set()
 
-    print()
+    logger.debug('\n')
     if inspect.isclass(serializer):
-        print("serializer is a class")
+        logger.debug("serializer is a class")
         serializer_instance = serializer()
     else:
         serializer_instance = serializer
@@ -66,20 +69,20 @@ def _prefetch(
 
     for name, field_instance in fields:
         field_type_name = field_instance.__class__.__name__
-        print(
+        logger.debug(
             f'{" " * indentation} Field "{name}", type: {field_type_name}, src: "{field_instance.source}"'
         )
 
         # We potentially need to recurse deeper
         if isinstance(field_instance, (BaseSerializer, RelatedField, ManyRelatedField)):
-            print(
+            logger.debug(
                 f'{" " * indentation}Found: {field_type_name} ({type(field_instance)}) - recursing deeper'
             )
             field_path = f"{prepend}{field_instance.source}"
 
             # Fields where the field name *is* the model.
             if isinstance(field_instance, RelatedField):
-                print(f'{" " * indentation} Found related field: ', field_type_name)
+                logger.debug(f'{" " * indentation} Found related field: {field_type_name}')
                 select_related.add(f"{prepend}{name}")
 
                 """
@@ -87,7 +90,7 @@ def _prefetch(
                 We also need to do this for all further calls
                 """
             elif isinstance(field_instance, (ListSerializer, ManyRelatedField)):
-                print(f'{" " * indentation} Found *:m relation: ', field_type_name)
+                logger.debug(f'{" " * indentation} Found *:m relation: {field_type_name}')
                 prefetch_related.add(field_path)
 
                 # If it's a ManyRelatedField, we can only get the actual underlying field by querying child_relation
@@ -97,7 +100,7 @@ def _prefetch(
                 prefetch_related |= select
                 prefetch_related |= prefetch
             else:
-                print(f'{" " * indentation} Found *:1 relation: ', field_type_name)
+                logger.debug(f'{" " * indentation} Found *:1 relation: {field_type_name}')
                 select_related.add(field_path)
                 select, prefetch = _prefetch(
                     field_instance, field_path, indentation + 4
