@@ -2,6 +2,7 @@ from json import loads, dumps
 from pprint import pprint
 
 from django.test import TestCase
+from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 from rest_framework.test import APIRequestFactory
 from rest_framework.utils.serializer_helpers import ReturnList
@@ -64,6 +65,24 @@ class TestOneToMany(TestCase):
     def setUp(self):
         top_level = TopLevel.objects.create(top_level_text="foo")
         child_b = ChildB.objects.create(parent=top_level)
+
+
+    def test_it_prefetches_foreign_key_when_source_is_changed(self):
+        #TODO: MAKE THIS TEST NOT FAIL
+        car = ParentCar.objects.create()
+        parent = DeeplyNestedParent.objects.create(car=car)
+
+        class Serializer(ModelSerializer):
+            car_id = PrimaryKeyRelatedField(source="car", queryset=ParentCar.objects.all())
+
+            class Meta:
+                model = DeeplyNestedParent
+                fields = ['car', 'car_id']
+                depth=1
+
+        _run_test(Serializer, DeeplyNestedParent, 1)
+
+
 
     def test_it_prefetches_foreign_key_relations_when_owning(self):
         serializer_class = ChildBSerializer
@@ -323,6 +342,7 @@ class TestOneToOne(TestCase):
         assert len(data) == 1
         assert data[0]["brother_text"] == "bro"
         assert data[0]["sibling"]["childA_text"] == "childA"
+
 
 
 def _run_test(serializer_cls, model_cls, sql_queries=1) -> ReturnList:
