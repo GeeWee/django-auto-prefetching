@@ -1,3 +1,4 @@
+import logging
 from json import loads, dumps
 from pprint import pprint
 
@@ -50,6 +51,9 @@ from test_project.top_level_serializer import (
 from test_project.views import ManyTwoSerializerOnlyFullRepresentationViewSet
 
 
+logger = logging.getLogger('django-auto-prefetching')
+logger.setLevel(level=logging.DEBUG)
+
 class NoRelationsTest(TestCase):
     def test_that_it_fetches_without_relations_properly(self):
         ChildA.objects.create(childA_text="text")
@@ -68,11 +72,10 @@ class TestOneToMany(TestCase):
 
 
     def test_it_prefetches_foreign_key_when_source_is_changed(self):
-        #TODO: MAKE THIS TEST NOT FAIL
         car = ParentCar.objects.create()
         parent = DeeplyNestedParent.objects.create(car=car)
 
-        class Serializer(ModelSerializer):
+        class CarSerializer(ModelSerializer):
             car_id = PrimaryKeyRelatedField(source="car", queryset=ParentCar.objects.all())
 
             class Meta:
@@ -80,7 +83,7 @@ class TestOneToMany(TestCase):
                 fields = ['car', 'car_id']
                 depth=1
 
-        _run_test(Serializer, DeeplyNestedParent, 1)
+        _run_test(CarSerializer, DeeplyNestedParent, 1)
 
 
 

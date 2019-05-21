@@ -10,7 +10,8 @@ from rest_framework.relations import RelatedField, ManyRelatedField
 from rest_framework.serializers import ModelSerializer, BaseSerializer, ListSerializer
 
 logger = logging.getLogger('django-auto-prefetching')
-logger.addHandler(logging.NullHandler())
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.WARNING)
 
 class AutoPrefetchViewSetMixin:
     def get_queryset(self):
@@ -43,6 +44,7 @@ def _prefetch(
     """
     prepend = f"{path}__" if path is not None else ""
     class_name = getattr(serializer, "__name__", serializer.__class__.__name__)
+    logger.debug('\n')
 
     logger.debug(
         f'{" " * indentation}LOOKING AT SERIALIZER: {class_name} from path: {prepend}'
@@ -51,9 +53,7 @@ def _prefetch(
     select_related = set()
     prefetch_related = set()
 
-    logger.debug('\n')
     if inspect.isclass(serializer):
-        logger.debug("serializer is a class")
         serializer_instance = serializer()
     else:
         serializer_instance = serializer
@@ -76,14 +76,14 @@ def _prefetch(
         # We potentially need to recurse deeper
         if isinstance(field_instance, (BaseSerializer, RelatedField, ManyRelatedField)):
             logger.debug(
-                f'{" " * indentation}Found: {field_type_name} ({type(field_instance)}) - recursing deeper'
+                f'{" " * indentation}Found related: {field_type_name} ({type(field_instance)}) - recursing deeper'
             )
             field_path = f"{prepend}{field_instance.source}"
 
             # Fields where the field name *is* the model.
             if isinstance(field_instance, RelatedField):
-                logger.debug(f'{" " * indentation} Found related field: {field_type_name}')
-                select_related.add(f"{prepend}{name}")
+                logger.debug(f'{" " * indentation} Found related field: {field_type_name} - selecting {field_instance.source}')
+                select_related.add(f"{prepend}{field_instance.source}")
 
                 """
                 If we have multiple entities, we need to use prefetch_related instead of select_related
