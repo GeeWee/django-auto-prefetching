@@ -1,0 +1,167 @@
+# TODO turn logging off properly (SETLEVEL?)
+
+# DOESN'T WORK WITH THIS SERIALIZER
+
+class ContainerSerializer(BaseModelSerializer):
+    class Meta:
+        model = Container
+        fields = ["id", "amount", "type", "size", "fraction", "location", "default_facility"]
+        extra_kwargs = {"default_facility_id": {"allow_null": True, "required": False}}
+        depth = 3
+
+
+
+
+# THIS ERROR:
+Traceback (most recent call last):
+django.core.exceptions.FieldError: Invalid field name(s) given in select_related: 'fraction_id', 'type_id', 'default_facility_id', 'size_id', 'location_id'. Choices are: type, size, fraction, location, default_facility
+
+
+# THIS LOG
+ LOOKING AT SERIALIZER: ContainerSerializer from path:
+  Field "id", type: IntegerField, src: "id"
+  Field "amount", type: IntegerField, src: "amount"
+  Field "type", type: NestedSerializer, src: "type"
+ Found: NestedSerializer (<class 'utils.serializer.serializer_mixins.NestedFieldExclude.build_nested_field.<locals>.NestedSerializer'>) - recursing deeper
+  Found *:1 relation: NestedSerializer
+     LOOKING AT SERIALIZER: NestedSerializer from path: type__
+      Field "id", type: IntegerField, src: "id"
+      Field "name", type: CharField, src: "name"
+  Field "type_id", type: PrimaryKeyRelatedField, src: "type"
+ Found: PrimaryKeyRelatedField (<class 'rest_framework.relations.PrimaryKeyRelatedField'>) - recursing deeper
+  Found related field: PrimaryKeyRelatedField
+  Field "size", type: NestedSerializer, src: "size"
+ Found: NestedSerializer (<class 'utils.serializer.serializer_mixins.NestedFieldExclude.build_nested_field.<locals>.NestedSerializer'>) - recursing deeper
+  Found *:1 relation: NestedSerializer
+     LOOKING AT SERIALIZER: NestedSerializer from path: size__
+      Field "id", type: IntegerField, src: "id"
+      Field "name", type: CharField, src: "name"
+  Field "size_id", type: PrimaryKeyRelatedField, src: "size"
+ Found: PrimaryKeyRelatedField (<class 'rest_framework.relations.PrimaryKeyRelatedField'>) - recursing deeper
+  Found related field: PrimaryKeyRelatedField
+  Field "fraction", type: NestedSerializer, src: "fraction"
+ Found: NestedSerializer (<class 'utils.serializer.serializer_mixins.NestedFieldExclude.build_nested_field.<locals>.NestedSerializer'>) - recursing deeper
+  Found *:1 relation: NestedSerializer
+     LOOKING AT SERIALIZER: NestedSerializer from path: fraction__
+      Field "id", type: IntegerField, src: "id"
+      Field "name", type: CharField, src: "name"
+      Field "e_number", type: IntegerField, src: "e_number"
+  Field "fraction_id", type: PrimaryKeyRelatedField, src: "fraction"
+ Found: PrimaryKeyRelatedField (<class 'rest_framework.relations.PrimaryKeyRelatedField'>) - recursing deeper
+  Found related field: PrimaryKeyRelatedField
+  Field "location", type: NestedSerializer, src: "location"
+ Found: NestedSerializer (<class 'utils.serializer.serializer_mixins.NestedFieldExclude.build_nested_field.<locals>.NestedSerializer'>) - recursing deeper
+  Found *:1 relation: NestedSerializer
+     LOOKING AT SERIALIZER: NestedSerializer from path: location__
+      Field "id", type: IntegerField, src: "id"
+      Field "aws_id", type: CharField, src: "aws_id"
+      Field "text", type: CharField, src: "text"
+      Field "zip", type: CharField, src: "zip"
+      Field "p_number", type: IntegerField, src: "p_number"
+      Field "exact_location", type: CharField, src: "exact_location"
+      Field "notes", type: CharField, src: "notes"
+      Field "company", type: NestedSerializer, src: "company"
+     Found: NestedSerializer (<class 'utils.serializer.serializer_mixins.NestedFieldExclude.build_nested_field.<locals>.NestedSerializer'>) - recursing deeper
+      Found *:1 relation: NestedSerializer
+         LOOKING AT SERIALIZER: NestedSerializer from path: location__company__
+          Field "id", type: IntegerField, src: "id"
+          Field "cvr", type: IntegerField, src: "cvr"
+          Field "main_phone_number", type: CharField, src: "main_phone_number"
+          Field "name", type: CharField, src: "name"
+          Field "default_reference_number", type: CharField, src: "default_reference_number"
+          Field "contact_person_name", type: CharField, src: "contact_person_name"
+          Field "contact_person_mail", type: EmailField, src: "contact_person_mail"
+          Field "contact_person_number", type: CharField, src: "contact_person_number"
+  Field "location_id", type: PrimaryKeyRelatedField, src: "location"
+ Found: PrimaryKeyRelatedField (<class 'rest_framework.relations.PrimaryKeyRelatedField'>) - recursing deeper
+  Found related field: PrimaryKeyRelatedField
+  Field "default_facility", type: NestedSerializer, src: "default_facility"
+ Found: NestedSerializer (<class 'utils.serializer.serializer_mixins.NestedFieldExclude.build_nested_field.<locals>.NestedSerializer'>) - recursing deeper
+  Found *:1 relation: NestedSerializer
+     LOOKING AT SERIALIZER: NestedSerializer from path: default_facility__
+      Field "id", type: IntegerField, src: "id"
+      Field "name", type: CharField, src: "name"
+      Field "opening_hours", type: CharField, src: "opening_hours"
+      Field "phone_number", type: CharField, src: "phone_number"
+      Field "unit_price_currency", type: CharField, src: "unit_price_currency"
+      Field "unit_price", type: MoneyField, src: "unit_price"
+      Field "location", type: NestedSerializer, src: "location"
+     Found: NestedSerializer (<class 'utils.serializer.serializer_mixins.NestedFieldExclude.build_nested_field.<locals>.NestedSerializer'>) - recursing deeper
+      Found *:1 relation: NestedSerializer
+         LOOKING AT SERIALIZER: NestedSerializer from path: default_facility__location__
+          Field "id", type: IntegerField, src: "id"
+          Field "aws_id", type: CharField, src: "aws_id"
+          Field "text", type: CharField, src: "text"
+          Field "zip", type: CharField, src: "zip"
+          Field "p_number", type: IntegerField, src: "p_number"
+          Field "exact_location", type: CharField, src: "exact_location"
+          Field "notes", type: CharField, src: "notes"
+      Field "fraction", type: NestedSerializer, src: "fraction"
+     Found: NestedSerializer (<class 'utils.serializer.serializer_mixins.NestedFieldExclude.build_nested_field.<locals>.NestedSerializer'>) - recursing deeper
+      Found *:1 relation: NestedSerializer
+         LOOKING AT SERIALIZER: NestedSerializer from path: default_facility__fraction__
+          Field "id", type: IntegerField, src: "id"
+          Field "name", type: CharField, src: "name"
+          Field "e_number", type: IntegerField, src: "e_number"
+  Field "default_facility_id", type: PrimaryKeyRelatedField, src: "default_facility"
+ Found: PrimaryKeyRelatedField (<class 'rest_framework.relations.PrimaryKeyRelatedField'>) - recursing deeper
+  Found related field: PrimaryKeyRelatedField
+
+
+# SERIALIZER INTROSPECTION
+ContainerSerializer():
+    id = IntegerField(label='ID', read_only=True)
+    amount = IntegerField(max_value=2147483647, min_value=0, validators=[<function validate_nonzero>])
+    type = NestedSerializer(read_only=True):
+        id = IntegerField(label='ID', read_only=True)
+        name = CharField(max_length=40, validators=[<UniqueValidator(queryset=ContainerType.objects.all())>])
+    type_id = PrimaryKeyRelatedField(queryset=<QuerySet [<containers.ContainerType name='MINI'>, <containers.ContainerType name='MIDI'>, <containers.ContainerType name='MAXI'>, <containers.ContainerType name='COMPRIMATOR'>, <containers.ContainerType name='CRANE_GRAB'>, <containers.ContainerType name='EASY_TIP'>, <containers.ContainerType name='BALE'>, <containers.ContainerType name='PALLET'>]>, source='type')
+    size = NestedSerializer(read_only=True):
+        id = IntegerField(label='ID', read_only=True)
+        name = CharField(max_length=40, validators=[<UniqueValidator(queryset=ContainerSize.objects.all())>])
+    size_id = PrimaryKeyRelatedField(queryset=<QuerySet [<containers.ContainerSize name='120_L'>, <containers.ContainerSize name='140_L'>, <containers.ContainerSize name='190_L'>, <containers.ContainerSize name='240_L'>, <containers.ContainerSize name='660_L'>, <containers.ContainerSize name='770_L'>, <containers.ContainerSize name='1000_L'>, <containers.ContainerSize name='4.5_M3'>, <containers.ContainerSize name='6_M3'>, <containers.ContainerSize name='14_M3'>, <containers.ContainerSize name='30_M3'>, <containers.ContainerSize name='35_M3'>, <containers.ContainerSize name='1.4_M3'>, <containers.ContainerSize name='3.7_M3'>, <containers.ContainerSize name='7.65_M3'>, <containers.ContainerSize name='480_L'>, <containers.ContainerSize name='600_L'>, <containers.ContainerSize name='825_L'>, <containers.ContainerSize name='1175_L'>, <containers.ContainerSize name='1350_L'>, '...(remaining elements truncated)...']>, source='size')
+    fraction = NestedSerializer(read_only=True):
+        id = IntegerField(label='ID', read_only=True)
+        name = CharField(max_length=80, validators=[<UniqueValidator(queryset=Fraction.objects.all())>])
+        e_number = IntegerField(allow_null=True, max_value=50, min_value=0, required=False)
+    fraction_id = PrimaryKeyRelatedField(queryset=<QuerySet [<containers.Fraction name='Dagrenovationslignende affald, e_number=1'>, <containers.Fraction name='Madaffald, e_number=2'>, <containers.Fraction name='Småt brændbart, e_number=3'>, <containers.Fraction name='Stort brændbart, e_number=3'>, <containers.Fraction name='Deponeringsegnet, e_number=4'>, <containers.Fraction name='Papir & aviser, e_number=5'>, <containers.Fraction name='Pap, e_number=6'>, <containers.Fraction name='Glas, e_number=7'>, <containers.Fraction name='Plast, e_number=8'>, <containers.Fraction name='Emballage papir, e_number=9'>, <containers.Fraction name='Emballage pap, e_number=10'>, <containers.Fraction name='Emballage glas, e_number=11'>, <containers.Fraction name='Emballage metal, e_number=12'>, <containers.Fraction name='Emballage plast, e_number=13'>, <containers.Fraction name='Blandet emballage, e_number=36'>, <containers.Fraction name='Fortroligt affald, e_number=3'>, <containers.Fraction name='PVC, e_number=14'>, <containers.Fraction name='Træ, e_number=15'>, <containers.Fraction name='Imprægneret træ, e_number=16'>, <containers.Fraction name='Haveaffald, e_number=17'>, '...(remaining elements truncated)...']>, source='fraction')
+    location = NestedSerializer(read_only=True):
+        id = IntegerField(label='ID', read_only=True)
+        aws_id = CharField(max_length=36, validators=[<function validate_address_uuid>])
+        text = CharField(max_length=60)
+        zip = CharField(max_length=8)
+        p_number = IntegerField(allow_null=True, max_value=9223372036854775807, min_value=-9223372036854775808, required=False)
+        exact_location = CharField(allow_blank=True, required=False, style={'base_template': 'textarea.html'})
+        notes = CharField(allow_blank=True, required=False, style={'base_template': 'textarea.html'})
+        company = NestedSerializer(read_only=True):
+            id = IntegerField(label='ID', read_only=True)
+            cvr = IntegerField(allow_null=True, max_value=2147483647, min_value=0, required=True)
+            main_phone_number = CharField(allow_blank=True, allow_null=True, max_length=128, required=False, validators=[<function validate_international_phonenumber>])
+            name = CharField(max_length=200, required=True)
+            default_reference_number = CharField(allow_blank=True, max_length=200, required=False)
+            contact_person_name = CharField(allow_blank=True, required=False, style={'base_template': 'textarea.html'})
+            contact_person_mail = EmailField(allow_blank=True, max_length=254, required=False)
+            contact_person_number = CharField(allow_blank=True, allow_null=True, max_length=128, required=False, validators=[<function validate_international_phonenumber>])
+            class Meta:
+                validators = [<UniqueTogetherValidator(queryset=Company.objects.all(), fields=('cvr', 'name'))>]
+    location_id = PrimaryKeyRelatedField(queryset=<QuerySet [<companies.Location address='Sofievej 1, 2900 Hellerup', zip='2900', p_number='1009960984', company_id='1', notes='Kode til porten er 1313'>, <companies.Location address='Kalvebod Brygge 1, 1560 København V', zip='1560', p_number='1009633282', company_id='2', notes=''>, <companies.Location address='Jægersborg Alle 36, 2920 Charlottenlund', zip='2920', p_number='1005047607', company_id='2', notes=''>, <companies.Location address='Englandsvej 376, 2770 Kastrup', zip='2770', p_number='1005047590', company_id='2', notes='Kontakt Bent ved ankomst'>, <companies.Location address='Nybrovej 75, 2820 Gentofte', zip='2820', p_number='1019307340', company_id='3', notes=''>, <companies.Location address='Sofievej 1, 2900 Hellerup', zip='2900', p_number='1019307340', company_id='3', notes=''>, <companies.Location address='Carsten Niebuhrs Gade 11, 1577 København V', zip='1577', p_number='1015229310', company_id='3', notes=''>, <companies.Location address='Vesterbrogade 5, 3., 1620 København V', zip='1620', p_number='1022321249', company_id='4', notes='Kom mellem 05-18'>, <companies.Location address='Nordre Strandvej 95A, 220, 3150 Hellebæk', zip='3150', p_number='1010062655', company_id='5', notes=''>, <companies.Location address='Gyngemose Parkvej 50, 2860 Søborg', zip='2860', p_number='1002956763', company_id='6', notes=''>, <companies.Location address='Hanebjergvej 4, Nørre Herlev, 3400 Hillerød', zip='3400', p_number='1008821492', company_id='7', notes=''>, <companies.Location address='Vibeholms Allé 20, 2605 Brøndby', zip='2605', p_number='1003150140', company_id='8', notes='Koden til porten er 2605'>, <companies.Location address='Rebæk Alle 4, 2650 Hvidovre', zip='2650', p_number='1021524073', company_id='9', notes=''>, <companies.Location address='Dyrehegnet 17, 2740 Skovlunde', zip='2740', p_number='1010000927', company_id='10', notes=''>, <companies.Location address='Sindalvej 10, 2610 Rødovre', zip='2610', p_number='1002334938', company_id='11', notes='Kode til porten er 1313'>, <companies.Location address='Toms Alle 1, 2750 Ballerup', zip='2750', p_number='1003115089', company_id='12', notes=''>, <companies.Location address='Havnevej 2, 2670 Greve', zip='2670', p_number='1019620618', company_id='13', notes=''>, <companies.Location address='Rentemestervej 8, 4., 2400 København NV', zip='2400', p_number='1003112089', company_id='14', notes=''>, <companies.Location address='Bispevej 4, 2400 København NV', zip='2400', p_number='1003112083', company_id='14', notes=''>, <companies.Location address='Tranevej 4, 2400 København NV', zip='2400', p_number='1003132089', company_id='15', notes=''>, '...(remaining elements truncated)...']>, source='location')
+    default_facility = NestedSerializer(read_only=True):
+        id = IntegerField(label='ID', read_only=True)
+        name = CharField(style={'base_template': 'textarea.html'})
+        opening_hours = CharField(allow_blank=True, required=False, style={'base_template': 'textarea.html'})
+        phone_number = CharField(allow_blank=True, allow_null=True, max_length=128, required=False, validators=[<function validate_international_phonenumber>])
+        unit_price_currency = CharField(read_only=True)
+        unit_price = MoneyField(decimal_places=4, max_digits=19, required=False)
+        location = NestedSerializer(read_only=True):
+            id = IntegerField(label='ID', read_only=True)
+            aws_id = CharField(max_length=36, validators=[<function validate_address_uuid>])
+            text = CharField(max_length=60)
+            zip = CharField(max_length=8)
+            p_number = IntegerField(allow_null=True, max_value=9223372036854775807, min_value=-9223372036854775808, required=False)
+            exact_location = CharField(allow_blank=True, required=False, style={'base_template': 'textarea.html'})
+            notes = CharField(allow_blank=True, required=False, style={'base_template': 'textarea.html'})
+        fraction = NestedSerializer(read_only=True):
+            id = IntegerField(label='ID', read_only=True)
+            name = CharField(max_length=80, validators=[<UniqueValidator(queryset=Fraction.objects.all())>])
+            e_number = IntegerField(allow_null=True, max_value=50, min_value=0, required=False)
+    default_facility_id = PrimaryKeyRelatedField(allow_null=True, queryset=<QuerySet [<facilities.Facility id=1, name='Vestforbrænding i Glostrup' location=1, phone=None, fraction=3, price=365.00 Dkr>, <facilities.Facility id=2, name='Vestforbrænding i Frederikssund' location=2, phone=None, fraction=2, price=650.00 Dkr>, <facilities.Facility id=3, name='Vestforbrænding i Frederikssund' location=3, phone=None, fraction=1, price=530.00 Dkr>, <facilities.Facility id=4, name='Vestforbrænding i Frederikssund' location=4, phone=None, fraction=3, price=530.00 Dkr>, <facilities.Facility id=5, name='Norfors' location=5, phone=None, fraction=1, price=590.00 Dkr>, <facilities.Facility id=6, name='Norfors' location=6, phone=None, fraction=3, price=590.00 Dkr>, <facilities.Facility id=7, name='Norfors' location=7, phone=None, fraction=4, price=790.00 Dkr>, <facilities.Facility id=8, name='Stena Brøndy' location=8, phone=None, fraction=6, price=-450.00 Dkr>, <facilities.Facility id=9, name='Stena Brøndy' location=9, phone=None, fraction=7, price=-450.00 Dkr>]>, required=False, source='default_facility')
