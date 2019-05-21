@@ -14,8 +14,7 @@ class AutoPrefetchViewSetMixin:
         serializer = self.get_serializer()
         qs = super().get_queryset()
 
-        prefetch(qs, serializer)
-        return qs
+        return prefetch(qs, serializer)
 
 
 def prefetch(queryset, serializer: Type[ModelSerializer]):

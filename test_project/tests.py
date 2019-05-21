@@ -12,6 +12,13 @@ from test_project.child_a_serializer import (
     ChildABrotherSerializerWithBrother,
     ChildASerializerWithNoRelations,
 )
+from test_project.child_b_serializers import (
+    ChildBSerializer,
+    ChildBSerializerWithSlug,
+    ChildBSerializerWithNestedSerializer,
+    ChildBSerializerWithNestedRenamedSerializer,
+    ChildBSerializerWithDottedPropertyAccess,
+)
 from test_project.many_to_many_serializer import (
     ManyOneSerializerOnlyPrimaryKey,
     ManyOneSerializerOnlyFullRepresentation,
@@ -33,20 +40,13 @@ from test_project.models import (
     SingleChildToy,
     ParentCar,
 )
-from test_project.child_b_serializers import (
-    ChildBSerializer,
-    ChildBSerializerWithSlug,
-    ChildBSerializerWithNestedSerializer,
-    ChildBSerializerWithNestedRenamedSerializer,
-    ChildBSerializerWithDottedPropertyAccess,
-)
 from test_project.nested_serializer import DeeplyNestedParentSerializer
 from test_project.top_level_serializer import (
     TopLevelSerializerWithChildren,
     TopLevelSerializerWithNestedSerializer,
     TopLevelSerializerWithNestedSerializerWithSource,
 )
-from test_project.views import TopLevelWithChildrenViewSet
+from test_project.views import ManyTwoSerializerOnlyFullRepresentationViewSet
 
 
 class NoRelationsTest(TestCase):
@@ -144,6 +144,9 @@ class TestOneToMany(TestCase):
 
 class TestManyToMany(TestCase):
     def setUp(self):
+        self.factory = APIRequestFactory()
+
+
         # Three ModelOne exists
         # Four ModelTwo exists
 
@@ -193,6 +196,15 @@ class TestManyToMany(TestCase):
             ManyTwoSerializerOnlyFullRepresentation, ManyToManyModelTwo, sql_queries=3
         )
         self.assertEqual(len(data), 4)
+
+    def test_it_prefetches_many_to_many_relationships_when_attached_to_viewset(self):
+
+        # Same test as above but just with a viewsetmixin involved
+        view = ManyTwoSerializerOnlyFullRepresentationViewSet.as_view(actions={"get": "list"})
+        with self.assertNumQueries(3):
+            data = view(self.factory.get("/")).data
+            pprint_result(data)
+            self.assertEqual(len(data), 4)
 
 
 class TestDeeplyNested(TestCase):
@@ -269,13 +281,6 @@ class TestManyToOne(TestCase):
         pprint_result(data)
         assert len(data) == 1
         assert len(data[0]["children_b"]) == 3
-
-    def test_it_prefetches_many_to_one_relationships_when_attached_to_viewset(self):
-        # Same test as above but just with a viewsetmixin involved
-        view = TopLevelWithChildrenViewSet.as_view(actions={"get": "list"})
-        with self.assertNumQueries(2):
-            data = view(self.factory.get("/")).data
-            self.assertEqual(len(data), 1)
 
     def test_it_prefetches_foreign_key_relations_from_reverse_side_with_serializer(
         self
