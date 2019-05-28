@@ -1,24 +1,65 @@
 
-# Django auto-prefetching
+# Django Auto-Prefetching
+*Never worry about n+1 performance problems again*
 
-**NOTICE: THIS PROJECT IS A WORK IN PROGRESS, AND IS NOT PUBLISHED TO PYPI YET**
+This project aims to automatically perform the correct `select_related` and `prefetch_related`
+calls for your django-rest-framework code. It does this by inspecting your serializers, seeing what fields
+they use, and what models they refer to, and automatically calculating what needs to be prefetched.
 
-Automatic prefetching of related objects for Django Rest Framework.
+## Installation
+`pip install django_auto_prefetching`
 
-Inside your ViewSets `get_queryset` add the following code:
-```python3.7
-    def get_queryset():
-        qs = YOUR_MODEL.objects.all() # Or whatever queryset you want to use
-        qs = prefetch(self.get_serializer_class(), queryset) # This line prefetches the related model depending on the serializer.
-        return qs
+## AutoPrefetchViewSetMixin
+This is a ViewSet mixin you can use, which will automatically prefetch the needed objects from the database.
+In most circumstances this will be all the database optimizations you'll ever need to do:
+
+### Usage
+Simply add it after your ModelViewSet class.
+
+```python
+from django_auto_prefetching import AutoPrefetchViewSetMixin
+from rest_framework.viewsets import ModelViewSet
+
+class BaseModelViewSet(AutoPrefetchViewSetMixin, ModelViewSet):
+    queryset = YourModel.objects.all()
+    serializer_class = YourModelSerializer
+```
+It supports all types of relational fields, (many to many, one to many, one to one, etc.) out of the box.
+
+### Limitations
+The `AutoPrefetchViewSetMixin` cannot see what objects are being accessed in e.g. a `SerializerMethodField`.
+If you use objects in there, you might need to do some additional prefetches.
+
+```python
+from django_auto_prefetching import AutoPrefetchViewSetMixin
+from rest_framework.viewsets import ModelViewSet
+
+class BaseModelViewSet(AutoPrefetchViewSetMixin, ModelViewSet):
+    serializer_class = YourModelSerializer
+    
+    def get_queryset(self):
+            # Simply do the extra select_related / prefetch_related here
+            # and leave the mixin to do the rest of the work
+            queryset = YourModel.objects.all()
+            queryset = queryset.select_related('my_extra_field')
+            return queryset
+
 ```
 
-# Unresolved issues
+## Supported Versions
+Currently the project is only being tested against the latest version of Python (3.7) and the latest version of Django(2.2)
+Pull Requests to support earlier versions of Django are welcome.
 
-- If you forget to add `many=True` to a serializer that has the reverse side of the ForeignKey we calculate the wrong prefetch_related
-fields and we get an error. We can't catch this error early because it's only thrown when the queryset is evaluated
-- We can't prefetch anything that's accessed in serializer method fields.
+## Maturity
+The project is currently being used without issues in a medium-sized Django project(20.000 lines of code)
 
+## Contributing
+Contributions are welcome! To get the tests running, do the following:
+- Clone the repository.
+- If you don't have it, install [pipenv](https://docs.pipenv.org/en/latest/install/#installing-pipenv)
+- Install the dependencies with `pipenv sync --dev`
+- Activate the virtualenv created by pipenv by writing `pipenv shell`
+- Run the tests with `./manage.py test`   
 
 # LICENSE:
 MIT
