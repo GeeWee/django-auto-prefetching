@@ -23,6 +23,7 @@ jobs:
       - checkout
       # Download and cache dependencies
       - restore_cache:
+          - keys:
             - v2-pip-deps-{{ .Branch }}-{{ checksum "backend/Pipfile.lock" }}
             - v2-pip-deps-{{ .Branch }}-
             - v2-pip-deps-master
