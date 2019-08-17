@@ -47,7 +47,7 @@ from test_project.serializers.top_level_serializer import (
     TopLevelSerializerWithChildren,
     TopLevelSerializerWithNestedSerializer,
     TopLevelSerializerWithNestedSerializerWithSource,
-)
+    TopLevelSerializerWithHyperlinkedIdentityField)
 from test_project.views import ManyTwoSerializerOnlyFullRepresentationViewSet
 
 
@@ -347,6 +347,15 @@ class TestOneToOne(TestCase):
         assert data[0]["sibling"]["childA_text"] == "childA"
 
 
+class TestHyperlinkedIdentityField(TestCase):
+    def setUp(self) -> None:
+        toplevel = TopLevel.objects.create(top_level_text='toplevel')
+        childb = ChildB.objects.create(childB_text='child', parent=toplevel)
+
+    def test_it_doesnt_prefetch_for_hyperlinked_identity_fields(self):
+        data = _run_test(TopLevelSerializerWithHyperlinkedIdentityField, TopLevel, sql_queries=1)
+        pass
+
 
 def _run_test(serializer_cls, model_cls, sql_queries=1) -> ReturnList:
     """
@@ -358,9 +367,11 @@ def _run_test(serializer_cls, model_cls, sql_queries=1) -> ReturnList:
         f'Running test with serializer "{serializer_cls.__name__}" and model {model_cls.__name__}'
     )
     case = TestCase()
+    request = APIRequestFactory().get('/FOO')
+
     with case.assertNumQueries(sql_queries):
         prefetched_queryset = prefetch(model_cls.objects.all(), serializer_cls)
-        serializer_instance = serializer_cls(instance=prefetched_queryset, many=True)
+        serializer_instance = serializer_cls(instance=prefetched_queryset, many=True, context={'request': request})
         print("Data returned:")
         pprint_result(serializer_instance.data)
         return serializer_instance.data

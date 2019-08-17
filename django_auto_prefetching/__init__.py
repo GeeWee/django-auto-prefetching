@@ -6,7 +6,7 @@ import logging
 from typing import Type, Union
 
 from django.core.exceptions import FieldError
-from rest_framework.relations import RelatedField, ManyRelatedField
+from rest_framework.relations import RelatedField, ManyRelatedField, HyperlinkedIdentityField, HyperlinkedRelatedField
 from rest_framework.serializers import ModelSerializer, BaseSerializer, ListSerializer
 
 logger = logging.getLogger('django-auto-prefetching')
@@ -74,7 +74,7 @@ def _prefetch(
         )
 
         # We potentially need to recurse deeper
-        if isinstance(field_instance, (BaseSerializer, RelatedField, ManyRelatedField)):
+        if isinstance(field_instance, (BaseSerializer, RelatedField, ManyRelatedField)) and not isinstance(field_instance, IGNORED_FIELD_TYPES):
             logger.debug(
                 f'{" " * indentation}Found related: {field_type_name} ({type(field_instance)}) - recursing deeper'
             )
@@ -109,3 +109,10 @@ def _prefetch(
                 prefetch_related |= prefetch
 
     return (select_related, prefetch_related)
+
+
+IGNORED_FIELD_TYPES = (
+    # This is a subclass of RelatedField, but it always generates a URL no matter the depth, so we shouldn't prefetch
+    # based on it.
+    HyperlinkedRelatedField
+)
