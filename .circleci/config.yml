@@ -24,7 +24,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-pip-deps-{{ .Branch }}-{{ checksum "backend/Pipfile.lock" }}
+            - v2-pip-deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
             - v2-pip-deps-{{ .Branch }}-
             - v2-pip-deps-master
             - v2-pip-deps-
@@ -41,7 +41,7 @@ jobs:
             - '~/.cache/pip'
             - '~/.cache/pipenv'
             - './.venv'
-          key: v2-pip-deps-{{ .Branch }}-{{ checksum "backend/Pipfile.lock" }}
+          key: v2-pip-deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
       # run tests!
       # this example uses Django's built-in test-runner
@@ -51,8 +51,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            pipenv run
-            python manage.py test
+            pipenv run python manage.py test
 
       - store_artifacts:
           path: test-reports
