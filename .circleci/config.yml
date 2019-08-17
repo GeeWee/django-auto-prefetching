@@ -21,26 +21,26 @@ jobs:
 
     steps:
       - checkout
-
       # Download and cache dependencies
-      - restore_cache:  # ensure this step occurs *before* installing dependencies
+      - restore_cache:
             - v2-pip-deps-{{ .Branch }}-{{ checksum "backend/Pipfile.lock" }}
             - v2-pip-deps-{{ .Branch }}-
             - v2-pip-deps-master
             - v2-pip-deps-
+
       - run:
           name: install dependencies
           command: |
             pipenv sync --dev
 
       - save_cache:
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
           paths:
             - '~/.local'
             - '~/.cache/black'
             - '~/.cache/pip'
             - '~/.cache/pipenv'
             - './.venv'
+          key: v2-pip-deps-{{ .Branch }}-{{ checksum "backend/Pipfile.lock" }}
 
       # run tests!
       # this example uses Django's built-in test-runner
