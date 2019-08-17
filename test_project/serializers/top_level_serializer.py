@@ -35,7 +35,7 @@ class TopLevelSerializerWithNestedSerializerWithSource(ModelSerializer):
 
 
 class TopLevelSerializerWithHyperlinkedIdentityField(ModelSerializer):
-    children_b = serializers.HyperlinkedIdentityField(view_name='childb-detail')
+    children_b = serializers.HyperlinkedIdentityField(view_name="childb-detail")
 
     class Meta:
         model = TopLevel

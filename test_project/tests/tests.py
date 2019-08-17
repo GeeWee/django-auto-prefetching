@@ -47,12 +47,14 @@ from test_project.serializers.top_level_serializer import (
     TopLevelSerializerWithChildren,
     TopLevelSerializerWithNestedSerializer,
     TopLevelSerializerWithNestedSerializerWithSource,
-    TopLevelSerializerWithHyperlinkedIdentityField)
+    TopLevelSerializerWithHyperlinkedIdentityField,
+)
 from test_project.views import ManyTwoSerializerOnlyFullRepresentationViewSet
 
 
-logger = logging.getLogger('django-auto-prefetching')
+logger = logging.getLogger("django-auto-prefetching")
 logger.setLevel(level=logging.DEBUG)
+
 
 class NoRelationsTest(TestCase):
     def test_that_it_fetches_without_relations_properly(self):
@@ -70,22 +72,21 @@ class TestOneToMany(TestCase):
         top_level = TopLevel.objects.create(top_level_text="foo")
         child_b = ChildB.objects.create(parent=top_level)
 
-
     def test_it_prefetches_foreign_key_when_source_is_changed(self):
         car = ParentCar.objects.create()
         parent = DeeplyNestedParent.objects.create(car=car)
 
         class CarSerializer(ModelSerializer):
-            car_id = PrimaryKeyRelatedField(source="car", queryset=ParentCar.objects.all())
+            car_id = PrimaryKeyRelatedField(
+                source="car", queryset=ParentCar.objects.all()
+            )
 
             class Meta:
                 model = DeeplyNestedParent
-                fields = ['car', 'car_id']
-                depth=1
+                fields = ["car", "car_id"]
+                depth = 1
 
         _run_test(CarSerializer, DeeplyNestedParent, 1)
-
-
 
     def test_it_prefetches_foreign_key_relations_when_owning(self):
         serializer_class = ChildBSerializer
@@ -168,7 +169,6 @@ class TestManyToMany(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
 
-
         # Three ModelOne exists
         # Four ModelTwo exists
 
@@ -222,7 +222,9 @@ class TestManyToMany(TestCase):
     def test_it_prefetches_many_to_many_relationships_when_attached_to_viewset(self):
 
         # Same test as above but just with a viewsetmixin involved
-        view = ManyTwoSerializerOnlyFullRepresentationViewSet.as_view(actions={"get": "list"})
+        view = ManyTwoSerializerOnlyFullRepresentationViewSet.as_view(
+            actions={"get": "list"}
+        )
         with self.assertNumQueries(3):
             data = view(self.factory.get("/")).data
             pprint_result(data)
@@ -349,11 +351,13 @@ class TestOneToOne(TestCase):
 
 class TestHyperlinkedIdentityField(TestCase):
     def setUp(self) -> None:
-        toplevel = TopLevel.objects.create(top_level_text='toplevel')
-        childb = ChildB.objects.create(childB_text='child', parent=toplevel)
+        toplevel = TopLevel.objects.create(top_level_text="toplevel")
+        childb = ChildB.objects.create(childB_text="child", parent=toplevel)
 
     def test_it_doesnt_prefetch_for_hyperlinked_identity_fields(self):
-        data = _run_test(TopLevelSerializerWithHyperlinkedIdentityField, TopLevel, sql_queries=1)
+        data = _run_test(
+            TopLevelSerializerWithHyperlinkedIdentityField, TopLevel, sql_queries=1
+        )
 
 
 def _run_test(serializer_cls, model_cls, sql_queries=1) -> ReturnList:
@@ -366,11 +370,13 @@ def _run_test(serializer_cls, model_cls, sql_queries=1) -> ReturnList:
         f'Running test with serializer "{serializer_cls.__name__}" and model {model_cls.__name__}'
     )
     case = TestCase()
-    request = APIRequestFactory().get('/FOO')
+    request = APIRequestFactory().get("/FOO")
 
     with case.assertNumQueries(sql_queries):
         prefetched_queryset = prefetch(model_cls.objects.all(), serializer_cls)
-        serializer_instance = serializer_cls(instance=prefetched_queryset, many=True, context={'request': request})
+        serializer_instance = serializer_cls(
+            instance=prefetched_queryset, many=True, context={"request": request}
+        )
         print("Data returned:")
         pprint_result(serializer_instance.data)
         return serializer_instance.data
