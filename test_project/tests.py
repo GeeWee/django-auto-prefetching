@@ -9,19 +9,19 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.utils.serializer_helpers import ReturnList
 
 from django_auto_prefetching import prefetch
-from test_project.child_a_serializer import (
+from test_project.serializers.child_a_serializer import (
     ChildASerializer,
     ChildABrotherSerializerWithBrother,
     ChildASerializerWithNoRelations,
 )
-from test_project.child_b_serializers import (
+from test_project.serializers.child_b_serializers import (
     ChildBSerializer,
     ChildBSerializerWithSlug,
     ChildBSerializerWithNestedSerializer,
     ChildBSerializerWithNestedRenamedSerializer,
     ChildBSerializerWithDottedPropertyAccess,
 )
-from test_project.many_to_many_serializer import (
+from test_project.serializers.many_to_many_serializer import (
     ManyOneSerializerOnlyPrimaryKey,
     ManyOneSerializerOnlyFullRepresentation,
     ManyTwoSerializerOnlyPrimaryKey,
@@ -42,8 +42,8 @@ from test_project.models import (
     SingleChildToy,
     ParentCar,
 )
-from test_project.nested_serializer import DeeplyNestedParentSerializer
-from test_project.top_level_serializer import (
+from test_project.serializers.nested_serializer import DeeplyNestedParentSerializer
+from test_project.serializers.top_level_serializer import (
     TopLevelSerializerWithChildren,
     TopLevelSerializerWithNestedSerializer,
     TopLevelSerializerWithNestedSerializerWithSource,
