@@ -354,7 +354,6 @@ class TestHyperlinkedIdentityField(TestCase):
 
     def test_it_doesnt_prefetch_for_hyperlinked_identity_fields(self):
         data = _run_test(TopLevelSerializerWithHyperlinkedIdentityField, TopLevel, sql_queries=1)
-        pass
 
 
 def _run_test(serializer_cls, model_cls, sql_queries=1) -> ReturnList:
