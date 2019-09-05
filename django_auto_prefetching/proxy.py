@@ -1,6 +1,6 @@
 # From http://code.activestate.com/recipes/496741-object-proxying/
 # Probably not perfect. Replace later maybe
-from django_auto_prefetching.queryset_trace import PrefetchDescription
+from django_auto_prefetching.prefetch_description import PrefetchDescription
 
 
 class Proxy(object):
