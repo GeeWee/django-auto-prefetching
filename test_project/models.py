@@ -4,27 +4,37 @@ from django.db import models
 
 
 class ChildA(models.Model):
-    childA_text = models.TextField()
+    name = models.TextField()
+
+    def __str__(self):
+        return f'ChildA name={self.name} brother = {self.brother.name}'
 
 
 class ChildABro(models.Model):
     sibling = models.OneToOneField(
         ChildA, on_delete=models.CASCADE, related_name="brother"
     )
-    brother_text = models.TextField()
+    name = models.TextField()
+
+    def __str__(self):
+        return f'ChildABro name={self.name} brother = {self.sibling.name}'
 
 
 class ChildB(models.Model):
-    childB_text = models.TextField()
+    name = models.TextField()
     parent = models.ForeignKey(
-        "test_project.TopLevel", on_delete=models.CASCADE, related_name="children_b"
+        "test_project.Parent", on_delete=models.CASCADE, related_name="children_b"
     )
 
+    def __str__(self):
+        return f'ChildB name={self.name} parent = {self.parent.name}'
 
-class TopLevel(models.Model):
-    top_level_text = models.TextField()
+
+class Parent(models.Model):
+    name = models.TextField()
 
 
+# ------- Models for m2m ---------
 class ManyToManyModelOne(models.Model):
     one_text = models.TextField()
     model_two_set = models.ManyToManyField(
@@ -56,6 +66,9 @@ class SingleChildToy(models.Model):
     owner = models.ForeignKey(
         DeeplyNestedChild, on_delete=models.CASCADE, related_name="toy"
     )
+
+    def __str__(self):
+        return f"SingleChildToy for child {self.owner} in car {self.owner.parent.car}"
 
 
 class DeeplyNestedChildren(models.Model):

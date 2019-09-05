@@ -29,7 +29,7 @@ from test_project.serializers.many_to_many_serializer import (
 )
 from test_project.models import (
     ChildA,
-    TopLevel,
+    Parent,
     ChildB,
     ChildABro,
     ManyToManyModelOne,
@@ -69,7 +69,7 @@ class NoRelationsTest(TestCase):
 
 class TestOneToMany(TestCase):
     def setUp(self):
-        top_level = TopLevel.objects.create(top_level_text="foo")
+        top_level = Parent.objects.create(top_level_text="foo")
         child_b = ChildB.objects.create(parent=top_level)
 
     def test_it_prefetches_foreign_key_when_source_is_changed(self):
@@ -295,13 +295,13 @@ class TestDeeplyNested(TestCase):
 class TestManyToOne(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        top_level = TopLevel.objects.create(top_level_text="top")
+        top_level = Parent.objects.create(top_level_text="top")
         child_b = ChildB.objects.create(childB_text="1", parent=top_level)
         child_b = ChildB.objects.create(childB_text="2", parent=top_level)
         child_b = ChildB.objects.create(childB_text="3", parent=top_level)
 
     def test_it_prefetches_many_to_one_relationships(self):
-        data = _run_test(TopLevelSerializerWithChildren, TopLevel, sql_queries=2)
+        data = _run_test(TopLevelSerializerWithChildren, Parent, sql_queries=2)
         pprint_result(data)
         assert len(data) == 1
         assert len(data[0]["children_b"]) == 3
@@ -311,7 +311,7 @@ class TestManyToOne(TestCase):
     ):
         # Need two queries because of prefetch related
         data = _run_test(
-            TopLevelSerializerWithNestedSerializer, TopLevel, sql_queries=2
+            TopLevelSerializerWithNestedSerializer, Parent, sql_queries=2
         )
 
         assert len(data) == 1
@@ -322,7 +322,7 @@ class TestManyToOne(TestCase):
     ):
         # Need two queries because of prefetch related
         data = _run_test(
-            TopLevelSerializerWithNestedSerializerWithSource, TopLevel, sql_queries=2
+            TopLevelSerializerWithNestedSerializerWithSource, Parent, sql_queries=2
         )
 
         assert len(data) == 1
@@ -351,12 +351,12 @@ class TestOneToOne(TestCase):
 
 class TestHyperlinkedIdentityField(TestCase):
     def setUp(self) -> None:
-        toplevel = TopLevel.objects.create(top_level_text="toplevel")
+        toplevel = Parent.objects.create(top_level_text="toplevel")
         childb = ChildB.objects.create(childB_text="child", parent=toplevel)
 
     def test_it_doesnt_prefetch_for_hyperlinked_identity_fields(self):
         data = _run_test(
-            TopLevelSerializerWithHyperlinkedIdentityField, TopLevel, sql_queries=1
+            TopLevelSerializerWithHyperlinkedIdentityField, Parent, sql_queries=1
         )
 
 

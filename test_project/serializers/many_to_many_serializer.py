@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from test_project.models import (
     ChildA,
     ChildB,
-    TopLevel,
+    Parent,
     ManyToManyModelOne,
     ManyToManyModelTwo,
 )

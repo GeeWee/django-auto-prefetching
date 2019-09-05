@@ -2,16 +2,16 @@ from django.db.models import QuerySet
 from django.test import TestCase
 
 from django_auto_prefetching.queryset_trace import TracingQuerySet
-from test_project.models import ChildB, TopLevel, ChildABro, ChildA, ManyToManyModelOne, ManyToManyModelTwo, ParentCar, \
+from test_project.models import ChildB, Parent, ChildABro, ChildA, ManyToManyModelOne, ManyToManyModelTwo, ParentCar, \
     DeeplyNestedParent, DeeplyNestedChild, DeeplyNestedChildren, GrandKids
 
 
 class TestTracingQuerySet(TestCase):
     def test_tracing_queryset_will_fetch_many_to_one_fields_directly_on_the_model(self):
-        parent1 = TopLevel.objects.create(
+        parent1 = Parent.objects.create(
             top_level_text='1'
         )
-        parent2 = TopLevel.objects.create(
+        parent2 = Parent.objects.create(
             top_level_text='1'
         )
         for i in range(0, 5):
@@ -77,7 +77,7 @@ class TestTracingQuerySet(TestCase):
 
     def test_tracing_queryset_will_fetch_one_to_many_fields_directly_on_the_model(self):
         for i in range(0, 10):
-            parent = TopLevel.objects.create(
+            parent = Parent.objects.create(
                 top_level_text=i
             )
             ChildB.objects.create(
@@ -90,7 +90,7 @@ class TestTracingQuerySet(TestCase):
         # 2. For the .children_b lazyload
         # 3. 2 for the internal .all() call with prefetch_related of the children objects
         with self.assertNumQueries(4):
-            qs = TracingQuerySet(model=TopLevel)
+            qs = TracingQuerySet(model=Parent)
 
             for i in qs:
                 print('---------> printing i:')

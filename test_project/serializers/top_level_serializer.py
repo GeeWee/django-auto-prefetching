@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
 
-from test_project.models import ChildA, ChildB, TopLevel
+from test_project.models import ChildA, ChildB, Parent
 
 
 class _ChildrenBSerializer(ModelSerializer):
@@ -13,7 +13,7 @@ class _ChildrenBSerializer(ModelSerializer):
 
 class TopLevelSerializerWithChildren(ModelSerializer):
     class Meta:
-        model = TopLevel
+        model = Parent
         fields = ["top_level_text", "children_b"]
         depth = 1
 
@@ -22,7 +22,7 @@ class TopLevelSerializerWithNestedSerializer(ModelSerializer):
     children_b = _ChildrenBSerializer(many=True, read_only=True)
 
     class Meta:
-        model = TopLevel
+        model = Parent
         fields = ["top_level_text", "children_b"]
 
 
@@ -30,7 +30,7 @@ class TopLevelSerializerWithNestedSerializerWithSource(ModelSerializer):
     kiddos = _ChildrenBSerializer(many=True, read_only=True, source="children_b")
 
     class Meta:
-        model = TopLevel
+        model = Parent
         fields = ["top_level_text", "kiddos"]
 
 
@@ -38,5 +38,5 @@ class TopLevelSerializerWithHyperlinkedIdentityField(ModelSerializer):
     children_b = serializers.HyperlinkedIdentityField(view_name="childb-detail")
 
     class Meta:
-        model = TopLevel
+        model = Parent
         fields = ["top_level_text", "children_b"]
