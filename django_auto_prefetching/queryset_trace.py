@@ -7,7 +7,7 @@ from django_auto_prefetching.prefetch_description import PrefetchDescription
 from django_auto_prefetching.proxy import ModelProxy
 
 
-# TODO take this
+# TODO take this and turn it into a Proxy so that we can just decorate it on another queryset, e.g. in the modeladmin
 class TracingQuerySet(QuerySet):
     def __init__(self, model=None, query=None, using=None, hints=None):
         super().__init__(model, query, using, hints)
