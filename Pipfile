@@ -8,6 +8,8 @@ django = "*"
 djangorestframework = "*"
 black = "*"
 twine = "*"
+django-extensions = "*"
+django-debug-toolbar = "*"
 
 [packages]
 

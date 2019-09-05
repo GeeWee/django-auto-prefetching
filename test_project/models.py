@@ -63,6 +63,15 @@ class DeeplyNestedChild(models.Model):
 
 
 class SingleChildToy(models.Model):
+    @staticmethod
+    def create_dummy():
+        car = ParentCar.objects.create()
+        parent = DeeplyNestedParent.objects.create(car=car)
+        kid = DeeplyNestedChild.objects.create(parent=parent)
+        toy = SingleChildToy.objects.create(
+            owner=kid
+        )
+
     owner = models.ForeignKey(
         DeeplyNestedChild, on_delete=models.CASCADE, related_name="toy"
     )

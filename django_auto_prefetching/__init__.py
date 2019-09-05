@@ -5,6 +5,7 @@ import inspect
 import logging
 from typing import Type, Union
 
+from django.contrib.admin import ModelAdmin
 from django.core.exceptions import FieldError
 from rest_framework.relations import (
     RelatedField,
@@ -17,6 +18,11 @@ from rest_framework.serializers import ModelSerializer, BaseSerializer, ListSeri
 logger = logging.getLogger("django-auto-prefetching")
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.WARNING)
+
+class AutoPrefetchModelAdmin(ModelAdmin):
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
 
 
 class AutoPrefetchViewSetMixin:
