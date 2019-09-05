@@ -50,6 +50,9 @@ class ProxyingIterator:
             print(f'Skipping model with pk <{obj.pk}>')
             return next(self)
 
+        # No need to wrap in a proxy if we've spent our prefetch
+        if self.has_prefetched:
+            return obj
 
         self.pk_cache.add(obj.pk)
         proxied_object = ModelProxy(obj, self.originating_queryset)

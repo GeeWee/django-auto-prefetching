@@ -97,8 +97,6 @@ class TestTracingQuerySet(TestCase):
                 for kid in i.children_b.all():
                     print('----------------> kid', kid)
 
-        assert False
-
 
 
 
