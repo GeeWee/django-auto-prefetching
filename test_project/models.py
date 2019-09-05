@@ -63,11 +63,22 @@ class DeeplyNestedChildren(models.Model):
         DeeplyNestedParent, on_delete=models.CASCADE, related_name="children_set"
     )
 
+class GrandKidFavouriteMeal(models.Model):
+    name = models.TextField()
+
 
 class GrandKids(models.Model):
     parent = models.ForeignKey(
         DeeplyNestedChildren, on_delete=models.CASCADE, related_name="children"
     )
+    favourite_meal = models.ForeignKey(GrandKidFavouriteMeal, on_delete=models.SET_NULL, null=True, related_name='eaters')
+
+
+class GrandKidFavouriteToy(models.Model):
+    owner = models.ForeignKey(
+        GrandKids, on_delete=models.CASCADE, related_name="toy"
+    )
+
 
 
 class DeeplyNestedChildrenToys(models.Model):

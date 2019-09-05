@@ -55,5 +55,5 @@ class ProxyingIterator:
             return obj
 
         self.pk_cache.add(obj.pk)
-        proxied_object = ModelProxy(obj, self.originating_queryset)
+        proxied_object = ModelProxy(obj, self.originating_queryset, '')
         return proxied_object

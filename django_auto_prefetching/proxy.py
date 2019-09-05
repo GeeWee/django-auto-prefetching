@@ -90,8 +90,9 @@ class Proxy(object):
 
 
 class ModelProxy(Proxy):
-    def __init__(self, object_to_proxy, originating_queryset):
+    def __init__(self, object_to_proxy, originating_queryset, prefix: str):
         super().__init__(object_to_proxy)
+        self.prefix = prefix
         self.queryset = originating_queryset # TODO should probably be a weakset or something like that
 
     def __getattribute__(self, name):
@@ -99,45 +100,46 @@ class ModelProxy(Proxy):
         # skip this whole thing.
 
         unproxied_model = object.__getattribute__(self, '_obj')
-        relational_fields = unproxied_model._meta.get_fields()
+        attribute = getattr(unproxied_model, name)
 
-        model_field = None
-        for field in relational_fields:
+        model_fields = unproxied_model._meta.get_fields()
+
+        relational_field = None
+        for field in model_fields:
             # print(f'field "{field.name}"', field)
 
             if field.name == name and field.is_relation:
-                model_field = field
+                relational_field = field
                 # print(f'model field: "{field.name}"')
 
+        if not relational_field:
+            return attribute
+
         # Now we check whether or not it's been cached
-        if model_field:
-            is_cached_already = model_field.is_cached(unproxied_model)
-            # print(f'isCached: {is_cached_already}')
-            if not is_cached_already:
-                print(f'Model field "{name}" was not cached already. Prefetching it on next iteration')
-                qs = self.queryset
+        is_cached_already = relational_field.is_cached(unproxied_model)
+        if not is_cached_already:
+            return attribute
 
-                # Put the description on the queryset if it doesn't exist
-                if not hasattr(qs, '_django_auto_prefetching_should_prefetch_fields'):
-                    qs._django_auto_prefetching_should_prefetch_fields = PrefetchDescription(set(), set())
+        print(f'Model field "{name}" was not cached already. Prefetching it on next iteration')
+        qs = self.queryset
 
+        # Put the description on the queryset if it doesn't exist
+        if not hasattr(qs, '_django_auto_prefetching_should_prefetch_fields'):
+            qs._django_auto_prefetching_should_prefetch_fields = PrefetchDescription(set(), set())
 
-                # Depending on the field type, we should add it to prefetch_related or select_related
-                if model_field.one_to_one or model_field.many_to_one:
-                    qs._django_auto_prefetching_should_prefetch_fields.select_related.add(model_field.name)
-                elif model_field.one_to_many:
-                    qs._django_auto_prefetching_should_prefetch_fields.prefetch_related.add(model_field.name)
+        # Depending on the field type, we should add it to prefetch_related or select_related
+        if relational_field.one_to_one or relational_field.many_to_one:
+            qs._django_auto_prefetching_should_prefetch_fields.select_related.add(self.prefix + relational_field.name)
+        elif relational_field.one_to_many:
+            qs._django_auto_prefetching_should_prefetch_fields.prefetch_related.add(self.prefix + relational_field.name)
 
-                # TODO we currently don't support many to many, as the wayt to tell whether or not they've been prefetched
-                #  is different
+        # TODO we currently don't support many to many, as the wayt to tell whether or not they've been prefetched
+        #  is different
 
-
-        # else:
-        #     print(f'not model field: "{name}"')
-
-        attribute = getattr(unproxied_model, name)
-        # Here we need to wrap the model we're returning inside a new Proxy, so that we can find the next foreign key
-        # lookups
-        #TODO
-
-        return attribute
+        # Here if we have a relational field that manifests in just a single object, we can simply wrap
+        # that model in a ModelProxy with a new prefix, to build a new path there
+        if relational_field.one_to_one or relational_field.many_to_one:
+            related_model = getattr(unproxied_model, name)
+            # The prefix here is the name of our current model
+            prefix = f"{self.prefix}{relational_field.name}__"
+            return ModelProxy(related_model, originating_queryset=self.queryset, prefix=prefix)

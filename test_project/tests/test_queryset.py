@@ -2,7 +2,8 @@ from django.db.models import QuerySet
 from django.test import TestCase
 
 from django_auto_prefetching.queryset_trace import TracingQuerySet
-from test_project.models import ChildB, TopLevel, ChildABro, ChildA, ManyToManyModelOne, ManyToManyModelTwo
+from test_project.models import ChildB, TopLevel, ChildABro, ChildA, ManyToManyModelOne, ManyToManyModelTwo, ParentCar, \
+    DeeplyNestedParent, DeeplyNestedChild, DeeplyNestedChildren, GrandKids
 
 
 class TestTracingQuerySet(TestCase):
@@ -46,7 +47,7 @@ class TestTracingQuerySet(TestCase):
             )
             ChildABro.objects.create(
                 brother_text=i,
-                sibling = child_a
+                sibling=child_a
             )
 
         # Here we should get only three queries on both sides.
@@ -97,6 +98,71 @@ class TestTracingQuerySet(TestCase):
                 for kid in i.children_b.all():
                     print('----------------> kid', kid)
 
+    def test_tracing_queryset_will_fetch_deeply_nested_relations_one_to_one_and_many_to_one_relations(self):
+        for i in range(0, 5):
+            car = ParentCar.objects.create()
+            parent = DeeplyNestedParent.objects.create(
+                car=car,
+            )
+            parent2 = DeeplyNestedParent.objects.create(
+                car=car,
+            )
+            child = DeeplyNestedChild.objects.create(
+                parent=parent
+            )
+            child2 = DeeplyNestedChild.objects.create(
+                parent=parent2
+            )
 
 
+        # Here we should get only four queries.
+        # 1. For the .all call
+        # 2. For the .parent call
+        # 3. For the .parent.car call
+        # 4  For the internal .all() call with select_related of the other objects
+        with self.assertNumQueries(4):
+            qs = TracingQuerySet(model=DeeplyNestedChild)
 
+            for i in qs:
+                print('-------->')
+                print(i.parent.car)
+                print('-------->')
+                print(i.parent.car)
+
+    def test_tracing_queryset_will_fetch_deeply_nested_relations_one_to_many(self):
+        for i in range(0, 5):
+            car = ParentCar.objects.create()
+            parent = DeeplyNestedParent.objects.create(
+                car=car,
+            )
+            children1 = DeeplyNestedChildren.objects.create(
+                parent=parent
+            )
+            children2 = DeeplyNestedChildren.objects.create(
+                parent=parent
+            )
+            grand_kids = GrandKids.objects.create(
+                parent = children1
+            )
+            grand_kids = GrandKids.objects.create(
+                parent = children2
+            )
+
+
+        # Here we should get only four queries.
+        # 1. For the .all call
+        # 2. For the .parent call
+        # 3. For the .parent.car call
+        # 4  For the internal .all() call with select_related of the other objects
+        with self.assertNumQueries(4):
+            qs = TracingQuerySet(model=ParentCar)
+
+            for i in qs:
+                print('-------->')
+                for parent in i.deeplynestedparent_set.all():
+                    for children in parent.children_set.all():
+                        for grand_kid in children.children.all():
+                            print('grand kid!', grand_kid)
+                            print('favourite meal!', grand_kid.favourite_meal)
+
+        # TODO this obviously doesn't work, seeing as we don't follow m2m or one to many fields currently
