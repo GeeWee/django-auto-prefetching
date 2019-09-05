@@ -103,18 +103,20 @@ class ModelProxy(Proxy):
             # print(f'field "{field.name}"', field)
             if field.name == name:
                 model_field = field
-                print(f'model field: "{field.name}"')
+                # print(f'model field: "{field.name}"')
 
         # Now we check whether or not it's been cached
         if model_field:
             is_cached_already = model_field.is_cached(unproxied_model)
-            print(f'isCached: {is_cached_already}')
-
+            # print(f'isCached: {is_cached_already}')
             if not is_cached_already:
-                print('SETTING QUERYSET TO PREFETCH')
-                self.queryset.__django_auto_prefetching_should_prefetch_fields = {model_field.name}
-        else:
-            print(f'not model field: "{name}"')
+                print(f'Model field "{name}" was not cached already. Prefetching it on next iteration')
+                qs = self.queryset
+
+                qs._django_auto_prefetching_should_prefetch_fields = {model_field.name}
+
+        # else:
+        #     print(f'not model field: "{name}"')
 
         attribute = getattr(unproxied_model, name)
         # Here we need to wrap the model we're returning inside a new Proxy, so that we can find the next foreign key
