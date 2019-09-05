@@ -8,13 +8,13 @@ from test_project.models import ChildA, ChildB, Parent, ChildABro
 class ChildABrotherSerializer(ModelSerializer):
     class Meta:
         model = ChildABro
-        fields = ["brother_text"]
+        fields = ["name"]
 
 
 class ChildABrotherSerializerWithBrother(ModelSerializer):
     class Meta:
         model = ChildABro
-        fields = ["brother_text", "sibling"]
+        fields = ["name", "sibling"]
         depth = 1
 
 
@@ -23,7 +23,7 @@ class ChildASerializer(ModelSerializer):
 
     class Meta:
         model = ChildA
-        fields = ["childA_text", "brother"]
+        fields = ["name", "brother"]
         depth = 1
 
 
@@ -32,5 +32,5 @@ class ChildASerializerWithNoRelations(ModelSerializer):
 
     class Meta:
         model = ChildA
-        fields = ["childA_text"]
+        fields = ["name"]
         depth = 1

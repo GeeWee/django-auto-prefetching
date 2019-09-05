@@ -9,19 +9,19 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.utils.serializer_helpers import ReturnList
 
 from django_auto_prefetching import prefetch
-from test_project.child_a_serializer import (
+from test_project.serializers.child_a_serializer import (
     ChildASerializer,
     ChildABrotherSerializerWithBrother,
     ChildASerializerWithNoRelations,
 )
-from test_project.child_b_serializers import (
+from test_project.serializers.child_b_serializers import (
     ChildBSerializer,
     ChildBSerializerWithSlug,
     ChildBSerializerWithNestedSerializer,
     ChildBSerializerWithNestedRenamedSerializer,
     ChildBSerializerWithDottedPropertyAccess,
 )
-from test_project.many_to_many_serializer import (
+from test_project.serializers.many_to_many_serializer import (
     ManyOneSerializerOnlyPrimaryKey,
     ManyOneSerializerOnlyFullRepresentation,
     ManyTwoSerializerOnlyPrimaryKey,
@@ -42,8 +42,8 @@ from test_project.models import (
     SingleChildToy,
     ParentCar,
 )
-from test_project.nested_serializer import DeeplyNestedParentSerializer
-from test_project.top_level_serializer import (
+from test_project.serializers.nested_serializer import DeeplyNestedParentSerializer
+from test_project.serializers.top_level_serializer import (
     TopLevelSerializerWithChildren,
     TopLevelSerializerWithNestedSerializer,
     TopLevelSerializerWithNestedSerializerWithSource,
@@ -56,7 +56,7 @@ logger.setLevel(level=logging.DEBUG)
 
 class NoRelationsTest(TestCase):
     def test_that_it_fetches_without_relations_properly(self):
-        ChildA.objects.create(childA_text="text")
+        ChildA.objects.create(name="text")
 
         queryset = ChildA.objects.all()
 
@@ -67,7 +67,7 @@ class NoRelationsTest(TestCase):
 
 class TestOneToMany(TestCase):
     def setUp(self):
-        top_level = Parent.objects.create(top_level_text="foo")
+        top_level = Parent.objects.create(name="foo")
         child_b = ChildB.objects.create(parent=top_level)
 
 
@@ -119,7 +119,7 @@ class TestOneToMany(TestCase):
             print(data)
 
         assert len(data) == 1
-        assert data[0]["parent"]["top_level_text"] == "foo"
+        assert data[0]["parent"]["name"] == "foo"
 
     def test_it_prefetches_using_nested_serializers_when_source_is_changed(self):
         serializer_class = ChildBSerializerWithNestedRenamedSerializer
@@ -133,7 +133,7 @@ class TestOneToMany(TestCase):
             print(data)
 
         assert len(data) == 1
-        assert data[0]["dad"]["top_level_text"] == "foo"
+        assert data[0]["dad"]["name"] == "foo"
 
     def test_it_prefetches_when_using_dotted_property_access(self):
         serializer_class = ChildBSerializerWithDottedPropertyAccess
@@ -293,10 +293,10 @@ class TestDeeplyNested(TestCase):
 class TestManyToOne(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
-        top_level = Parent.objects.create(top_level_text="top")
-        child_b = ChildB.objects.create(childB_text="1", parent=top_level)
-        child_b = ChildB.objects.create(childB_text="2", parent=top_level)
-        child_b = ChildB.objects.create(childB_text="3", parent=top_level)
+        top_level = Parent.objects.create(name="top")
+        child_b = ChildB.objects.create(name="1", parent=top_level)
+        child_b = ChildB.objects.create(name="2", parent=top_level)
+        child_b = ChildB.objects.create(name="3", parent=top_level)
 
     def test_it_prefetches_many_to_one_relationships(self):
         data = _run_test(TopLevelSerializerWithChildren, Parent, sql_queries=2)
@@ -329,13 +329,13 @@ class TestManyToOne(TestCase):
 
 class TestOneToOne(TestCase):
     def setUp(self):
-        child_a = ChildA.objects.create(childA_text="childA")
-        child_a_bro = ChildABro.objects.create(sibling=child_a, brother_text="bro")
+        child_a = ChildA.objects.create(name="childA")
+        child_a_bro = ChildABro.objects.create(sibling=child_a, name="bro")
 
     def test_it_prefetches_foreign_key_relations_from_owning_side(self):
         data = _run_test(ChildASerializer, ChildA)
         assert len(data) == 1
-        assert data[0]["brother"]["brother_text"] == "bro"
+        assert data[0]["brother"]["name"] == "bro"
 
     def test_it_prefetches_foreign_key_relations_from_reverse_side_with_depth(self):
         # Need two queries because of prefetch related
@@ -343,8 +343,8 @@ class TestOneToOne(TestCase):
 
         pprint_result(data)
         assert len(data) == 1
-        assert data[0]["brother_text"] == "bro"
-        assert data[0]["sibling"]["childA_text"] == "childA"
+        assert data[0]["name"] == "bro"
+        assert data[0]["sibling"]["name"] == "childA"
 
 
 

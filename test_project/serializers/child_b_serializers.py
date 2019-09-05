@@ -8,11 +8,11 @@ from test_project.models import ChildA, ChildB, Parent
 class TopLevelSerializer(ModelSerializer):
     class Meta:
         model = Parent
-        fields = ["top_level_text"]
+        fields = ["name"]
 
 
 class ChildBSerializerWithDottedPropertyAccess(ModelSerializer):
-    parent_text = serializers.CharField(read_only=True, source="parent.top_level_text")
+    parent_text = serializers.CharField(read_only=True, source="parent.name")
 
     class Meta:
         model = ChildB
@@ -36,15 +36,15 @@ class ChildBSerializerWithNestedSerializer(ModelSerializer):
 
 
 class ChildBSerializerWithSlug(ModelSerializer):
-    parent = serializers.SlugRelatedField(slug_field="top_level_text", read_only=True)
+    parent = serializers.SlugRelatedField(slug_field="name", read_only=True)
 
     class Meta:
         model = ChildB
-        fields = ["childB_text", "parent"]
+        fields = ["name", "parent"]
 
 
 class ChildBSerializer(ModelSerializer):
     class Meta:
         model = ChildB
-        fields = ["childB_text", "parent"]
+        fields = ["name", "parent"]
         depth = 1

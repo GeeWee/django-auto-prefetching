@@ -8,13 +8,13 @@ from test_project.models import ChildA, ChildB, Parent
 class _ChildrenBSerializer(ModelSerializer):
     class Meta:
         model = ChildB
-        fields = ["childB_text", "parent"]
+        fields = ["name", "parent"]
 
 
 class TopLevelSerializerWithChildren(ModelSerializer):
     class Meta:
         model = Parent
-        fields = ["top_level_text", "children_b"]
+        fields = ["name", "children_b"]
         depth = 1
 
 
@@ -23,7 +23,7 @@ class TopLevelSerializerWithNestedSerializer(ModelSerializer):
 
     class Meta:
         model = Parent
-        fields = ["top_level_text", "children_b"]
+        fields = ["name", "children_b"]
 
 
 class TopLevelSerializerWithNestedSerializerWithSource(ModelSerializer):
@@ -31,7 +31,7 @@ class TopLevelSerializerWithNestedSerializerWithSource(ModelSerializer):
 
     class Meta:
         model = Parent
-        fields = ["top_level_text", "kiddos"]
+        fields = ["name", "kiddos"]
 
 
 class TopLevelSerializerWithHyperlinkedIdentityField(ModelSerializer):
@@ -39,4 +39,4 @@ class TopLevelSerializerWithHyperlinkedIdentityField(ModelSerializer):
 
     class Meta:
         model = Parent
-        fields = ["top_level_text", "children_b"]
+        fields = ["name", "children_b"]
