@@ -7,6 +7,7 @@ from django_auto_prefetching.prefetch_description import PrefetchDescription
 from django_auto_prefetching.proxy import ModelProxy
 
 
+# TODO take this
 class TracingQuerySet(QuerySet):
     def __init__(self, model=None, query=None, using=None, hints=None):
         super().__init__(model, query, using, hints)
@@ -17,6 +18,7 @@ class TracingQuerySet(QuerySet):
 
     def _original_iterator(self):
         return super().__iter__()
+
 
 
 class ProxyingIterator:

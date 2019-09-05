@@ -20,9 +20,11 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.WARNING)
 
 class AutoPrefetchModelAdmin(ModelAdmin):
-
     def get_queryset(self, request):
         qs = super().get_queryset(request)
+        # How to decorate the queryset here...?!
+
+
 
 
 class AutoPrefetchViewSetMixin:
