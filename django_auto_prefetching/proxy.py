@@ -1,5 +1,8 @@
 # From http://code.activestate.com/recipes/496741-object-proxying/
 # Probably not perfect. Replace later maybe
+from django_auto_prefetching.queryset_trace import PrefetchDescription
+
+
 class Proxy(object):
     __slots__ = ["_obj", "__weakref__"]
 
@@ -101,7 +104,8 @@ class ModelProxy(Proxy):
         model_field = None
         for field in relational_fields:
             # print(f'field "{field.name}"', field)
-            if field.name == name:
+
+            if field.name == name and field.is_relation:
                 model_field = field
                 # print(f'model field: "{field.name}"')
 
@@ -113,7 +117,17 @@ class ModelProxy(Proxy):
                 print(f'Model field "{name}" was not cached already. Prefetching it on next iteration')
                 qs = self.queryset
 
-                qs._django_auto_prefetching_should_prefetch_fields = {model_field.name}
+                # Put the description on the queryset if it doesn't exist
+                if not hasattr(qs, '_django_auto_prefetching_should_prefetch_fields'):
+                    qs._django_auto_prefetching_should_prefetch_fields = PrefetchDescription(set(), set())
+
+
+                # Depending on the field type, we should add it to prefetch_related or select_related
+                if model_field.one_to_one or model_field.many_to_one:
+                    qs._django_auto_prefetching_should_prefetch_fields.select_related.add(model_field.name)
+                elif model_field.one_to_many or model_field.many_to_many:
+                    qs._django_auto_prefetching_should_prefetch_fields.prefetch_related.add(model_field.name)
+
 
         # else:
         #     print(f'not model field: "{name}"')
