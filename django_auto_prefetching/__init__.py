@@ -6,12 +6,18 @@ import logging
 from typing import Type, Union
 
 from django.core.exceptions import FieldError
-from rest_framework.relations import RelatedField, ManyRelatedField
+from rest_framework.relations import (
+    RelatedField,
+    ManyRelatedField,
+    HyperlinkedIdentityField,
+    HyperlinkedRelatedField,
+)
 from rest_framework.serializers import ModelSerializer, BaseSerializer, ListSerializer
 
-logger = logging.getLogger('django-auto-prefetching')
+logger = logging.getLogger("django-auto-prefetching")
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.WARNING)
+
 
 class AutoPrefetchViewSetMixin:
     def get_queryset(self):
@@ -44,7 +50,7 @@ def _prefetch(
     """
     prepend = f"{path}__" if path is not None else ""
     class_name = getattr(serializer, "__name__", serializer.__class__.__name__)
-    logger.debug('\n')
+    logger.debug("\n")
 
     logger.debug(
         f'{" " * indentation}LOOKING AT SERIALIZER: {class_name} from path: {prepend}'
@@ -74,7 +80,9 @@ def _prefetch(
         )
 
         # We potentially need to recurse deeper
-        if isinstance(field_instance, (BaseSerializer, RelatedField, ManyRelatedField)):
+        if isinstance(
+            field_instance, (BaseSerializer, RelatedField, ManyRelatedField)
+        ) and not isinstance(field_instance, IGNORED_FIELD_TYPES):
             logger.debug(
                 f'{" " * indentation}Found related: {field_type_name} ({type(field_instance)}) - recursing deeper'
             )
@@ -82,7 +90,9 @@ def _prefetch(
 
             # Fields where the field name *is* the model.
             if isinstance(field_instance, RelatedField):
-                logger.debug(f'{" " * indentation} Found related field: {field_type_name} - selecting {field_instance.source}')
+                logger.debug(
+                    f'{" " * indentation} Found related field: {field_type_name} - selecting {field_instance.source}'
+                )
                 select_related.add(f"{prepend}{field_instance.source}")
 
                 """
@@ -90,7 +100,9 @@ def _prefetch(
                 We also need to do this for all further calls
                 """
             elif isinstance(field_instance, (ListSerializer, ManyRelatedField)):
-                logger.debug(f'{" " * indentation} Found *:m relation: {field_type_name}')
+                logger.debug(
+                    f'{" " * indentation} Found *:m relation: {field_type_name}'
+                )
                 prefetch_related.add(field_path)
 
                 # If it's a ManyRelatedField, we can only get the actual underlying field by querying child_relation
@@ -100,7 +112,9 @@ def _prefetch(
                 prefetch_related |= select
                 prefetch_related |= prefetch
             else:
-                logger.debug(f'{" " * indentation} Found *:1 relation: {field_type_name}')
+                logger.debug(
+                    f'{" " * indentation} Found *:1 relation: {field_type_name}'
+                )
                 select_related.add(field_path)
                 select, prefetch = _prefetch(
                     field_instance, field_path, indentation + 4
@@ -109,3 +123,10 @@ def _prefetch(
                 prefetch_related |= prefetch
 
     return (select_related, prefetch_related)
+
+
+IGNORED_FIELD_TYPES = (
+    # This is a subclass of RelatedField, but it always generates a URL no matter the depth, so we shouldn't prefetch
+    # based on it.
+    HyperlinkedRelatedField
+)

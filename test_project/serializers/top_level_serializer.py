@@ -32,3 +32,11 @@ class TopLevelSerializerWithNestedSerializerWithSource(ModelSerializer):
     class Meta:
         model = TopLevel
         fields = ["top_level_text", "kiddos"]
+
+
+class TopLevelSerializerWithHyperlinkedIdentityField(ModelSerializer):
+    children_b = serializers.HyperlinkedIdentityField(view_name="childb-detail")
+
+    class Meta:
+        model = TopLevel
+        fields = ["top_level_text", "children_b"]
