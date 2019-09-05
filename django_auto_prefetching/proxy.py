@@ -125,8 +125,11 @@ class ModelProxy(Proxy):
                 # Depending on the field type, we should add it to prefetch_related or select_related
                 if model_field.one_to_one or model_field.many_to_one:
                     qs._django_auto_prefetching_should_prefetch_fields.select_related.add(model_field.name)
-                elif model_field.one_to_many or model_field.many_to_many:
+                elif model_field.one_to_many:
                     qs._django_auto_prefetching_should_prefetch_fields.prefetch_related.add(model_field.name)
+
+                # TODO we currently don't support many to many, as the wayt to tell whether or not they've been prefetched
+                #  is different
 
 
         # else:

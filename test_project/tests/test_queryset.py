@@ -2,7 +2,7 @@ from django.db.models import QuerySet
 from django.test import TestCase
 
 from django_auto_prefetching.queryset_trace import TracingQuerySet
-from test_project.models import ChildB, TopLevel, ChildABro, ChildA
+from test_project.models import ChildB, TopLevel, ChildABro, ChildA, ManyToManyModelOne, ManyToManyModelTwo
 
 
 class TestTracingQuerySet(TestCase):
@@ -73,7 +73,6 @@ class TestTracingQuerySet(TestCase):
                 print('--------->', i.sibling)
                 print('---------> printing i parent AGAIN:')
                 print('--------->', i.sibling)
-
 
     def test_tracing_queryset_will_fetch_one_to_many_fields_directly_on_the_model(self):
         for i in range(0, 10):
