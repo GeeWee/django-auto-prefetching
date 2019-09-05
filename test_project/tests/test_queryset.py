@@ -2,6 +2,7 @@ from django.db import connection
 from django.db.models.query import QuerySet
 from django.test import TestCase
 
+from django_auto_prefetching.proxy import Proxy, ModelProxy
 from test_project.models import ChildB, TopLevel
 
 
@@ -31,7 +32,12 @@ class TestTracingQuerySet(TestCase):
             qs = SubclassOfQuerySet(model=ChildB)
 
             for i in qs:
-                print(i, i.parent)
+                print('--> printing i:')
+                print('-->',i)
+                print('--> printing i parent:')
+                print('-->', i.parent)
+                print('--> printing i parent AGAIN:')
+                print('-->', i.parent)
 
 
         assert False
@@ -44,21 +50,16 @@ class SubclassOfQuerySet(QuerySet):
 
     def __iter__(self):
         super_iter = super().__iter__()
-        return ProxyingIterator(super_iter)
+        return ProxyingIterator(super_iter, self)
 
 
 class ProxyingIterator:
-
-
-
-    def __init__(self, original) -> None:
+    def __init__(self, original, originating_queryset) -> None:
         super().__init__()
         self.original = original
+        self.originating_queryset = originating_queryset
 
     def __next__(self):
         obj = next(self.original)
-
-        #TODO next up. Proxy the model method, so we can track all attribute accesses
-
-        print('proxyingiterator', obj)
-        return obj
+        proxied_object = ModelProxy(obj, self.originating_queryset)
+        return proxied_object
