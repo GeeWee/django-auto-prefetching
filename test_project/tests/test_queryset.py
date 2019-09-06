@@ -1,6 +1,7 @@
 import logging
 
 from django.db import connection
+from django.db.models.fields.related_descriptors import ReverseManyToOneDescriptor
 
 from django_auto_prefetching.utils import log_queries, QueryLogger
 
@@ -8,6 +9,13 @@ logging.basicConfig(level=logging.DEBUG)
 
 from django.db.models import QuerySet
 from django.test import TestCase
+
+import unittest
+
+# Show full diff in unittest
+unittest.util._MAX_LENGTH = 2000
+
+logger = logging.getLogger()
 
 """
 TODO these tests don't work, because the proxy we're currently using doesn't do proxying
@@ -48,15 +56,15 @@ class TestTracingQuerySet(TestCase):
         # 3. One for the internal .all() call with the prefetched parents
         with self.assertNumQueries(3):
             with log_queries():
-                qs = trace_queryset(ChildB.objects.all())
+                with trace_queryset(ChildB.objects.all()) as qs:
 
-                for i in qs:
-                    print('---------> printing i:')
-                    print('--------->', i)
-                    print('---------> printing i parent:')
-                    print('--------->', i.parent)
-                    print('---------> printing i parent AGAIN:')
-                    print('--------->', i.parent)
+                    for i in qs:
+                        print('---------> printing i:')
+                        print('--------->', i)
+                        print('---------> printing i parent:')
+                        print('--------->', i.parent)
+                        print('---------> printing i parent AGAIN:')
+                        print('--------->', i.parent)
 
     def test_tracing_queryset_will_fetch_one_to_one_fields_directly_on_the_model(self):
         for i in range(0, 10):
@@ -74,25 +82,25 @@ class TestTracingQuerySet(TestCase):
         # 3. One for the internal .all() call with the prefetched parents
         with self.assertNumQueries(3):
             with log_queries():
-                qs = trace_queryset(ChildA.objects.all())
+                with trace_queryset(ChildA.objects.all()) as qs:
+                    for i in qs:
+                        print('---------> printing i:')
+                        print('--------->', i)
+                        # print('---------> printing i parent:')
+                        # print('--------->', i.brother)
+                        # print('---------> printing i parent AGAIN:')
+                        # print('--------->', i.brother)
+        #
+        with self.assertNumQueries(3):
+            with trace_queryset(ChildABro.objects.all()) as qs:
+
                 for i in qs:
                     print('---------> printing i:')
                     print('--------->', i)
-                    # print('---------> printing i parent:')
-                    # print('--------->', i.brother)
-                    # print('---------> printing i parent AGAIN:')
-                    # print('--------->', i.brother)
-        #
-        with self.assertNumQueries(3):
-            qs = trace_queryset(ChildABro.objects.all())
-
-            for i in qs:
-                print('---------> printing i:')
-                print('--------->', i)
-                print('---------> printing i parent:')
-                print('--------->', i.sibling)
-                print('---------> printing i parent AGAIN:')
-                print('--------->', i.sibling)
+                    print('---------> printing i parent:')
+                    print('--------->', i.sibling)
+                    print('---------> printing i parent AGAIN:')
+                    print('--------->', i.sibling)
 
     def test_tracing_queryset_will_fetch_one_to_many_fields_directly_on_the_model(self):
         for i in range(0, 10):
@@ -109,14 +117,13 @@ class TestTracingQuerySet(TestCase):
         # 2. For the .children_b lazyload
         # 3. 2 for the internal .all() call with prefetch_related of the children objects
         with self.assertNumQueries(4):
-            qs = trace_queryset(Parent.objects.all())
+            with trace_queryset(Parent.objects.all()) as qs:
 
-            for i in qs:
-                print('---------> printing i:')
-                print('--------->', i)
-                for kid in i.children_b.all():
-                    print('----------------> kid', kid)
-
+                for i in qs:
+                    print('---------> printing i:')
+                    print('--------->', i)
+                    for kid in i.children_b.all():
+                        print('----------------> kid', kid)
 
     # def test_tracing_queryset_will_fetch_deeply_nested_relations_one_to_one_and_many_to_one_relations(self):
     #     for i in range(0, 5):
@@ -150,3 +157,61 @@ class TestTracingQuerySet(TestCase):
     #             print(i.parent.car)
     #             print('-------->')
     #             print(i.parent.car)
+
+
+class TestTracingQuerySetErrorHandling(TestCase):
+
+    def test_tracing_queryset_will_reset_field_class_when_done(self):
+        parent1 = Parent.objects.create(
+            name='1'
+        )
+
+        with trace_queryset(Parent.objects.all()) as qs:
+            for i in qs:
+                print('looping')
+
+            self.assertEqual(type(Parent.__dict__['children_b']), ReverseManyToOneDescriptor)
+
+    def test_tracing_queryset_will_reset_field_class_even_if_not_looped_through(self):
+        parent1 = Parent.objects.create(
+            name='1'
+        )
+
+        # Trace the queryset but *do not* loop through it
+        with trace_queryset(Parent.objects.all()) as qs:
+            pass
+
+        self.assertEqual(type(Parent.__dict__['children_b']), ReverseManyToOneDescriptor)
+
+    def test_tracing_queryset_will_reset_field_class_even_if_it_throws_error_halfway_through(self):
+        self.maxDiff = None
+        parent1 = Parent.objects.create(
+            name='1'
+        )
+
+        # Trace the queryset but *do not* loop through it
+        with trace_queryset(Parent.objects.all()) as qs:
+            try:
+                for i in qs:
+                    raise AssertionError("Test exception")
+            except AssertionError:
+                pass
+
+        self.assertEqual(type(Parent.__dict__['children_b']), ReverseManyToOneDescriptor)
+
+    def test_tracing_queryset_will_throw_an_error_if_exhausted_multiple_times(self):
+        self.maxDiff = None
+        parent1 = Parent.objects.create(
+            name='1'
+        )
+
+        # Trace the queryset but *do not* loop through it
+        with trace_queryset(Parent.objects.all()) as qs:
+            for i in qs:
+                print(i)
+
+        with self.assertRaisesMessage(expected_exception=NotImplementedError, expected_message='Cannot use a TracingQueryset multiple times'):
+            for i in qs:
+                print(i)
+
+        self.assertEqual(type(Parent.__dict__['children_b']), ReverseManyToOneDescriptor)

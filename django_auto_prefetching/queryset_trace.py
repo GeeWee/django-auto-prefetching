@@ -1,5 +1,7 @@
 import copy
 import logging
+import threading
+import uuid
 from contextlib import contextmanager
 from typing import Iterator
 
@@ -10,16 +12,36 @@ from django_auto_prefetching.utils import PrefetchDescription
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
+"""
+Generate a threadlocal uuid here, in case multiple threads try to use the model simultaneously, we'll want the fields
+to only update the queryset for the thread we care about. We'll then only do something if the uuid when the field
+was created, matches the uuid when the __get__ lookup happens 
+"""
 
+threadlocal = threading.local()
+threadlocal.id = uuid.uuid4()
+
+
+@contextmanager
 def trace_queryset(queryset):
-    logger.debug('Tracing a queryset')
-    # TODO what about error handling if we fail in the middle of the .all() call?
-    queryset.__class__ = TracingQuerySet
-    return queryset
+    try:
+        logger.debug('Tracing a queryset')
+        queryset.__class__ = TracingQuerySet
+        yield queryset
+    finally:
+        queryset.revert_changes()
+        queryset.spent = True
 
 
 class TracingQuerySet(QuerySet):
+    spent = False
+
+    def revert_changes(self):
+        pass
+
     def __iter__(self):
+        if self.spent:
+            raise NotImplementedError('Cannot use a TracingQueryset multiple times')
         logger.debug("Proxying Queryset iterator")
         iterator = super().__iter__()
         return ProxyingIterator(iterator, self)
@@ -32,12 +54,11 @@ class ProxyingIterator:
         self.originating_queryset = originating_queryset
         self.pk_cache = set()
         self.has_prefetched = False
-        self.reverse = None
 
     def __next__(self):
         prefetch_fields: PrefetchDescription = getattr(self, '_django_auto_prefetching_should_prefetch_fields', None)
         if prefetch_fields and not self.has_prefetched:
-            self.reverse()
+            self.originating_queryset.revert_changes()
             logger.debug(f'Commencing automatic pre-fetching with fields {prefetch_fields}')
 
             # This is a copy of the queryset without the cache, and the special methods
@@ -65,7 +86,8 @@ class ProxyingIterator:
 
         self.pk_cache.add(obj.pk)
 
-        self.reverse = proxied_model(obj, self)
+        self.originating_queryset.revert_changes = proxied_model(obj, self)
+
         logging.debug('Returning proxied model')
         return obj
 
@@ -112,12 +134,13 @@ def monkey_patch_field(originating_iterator, model, field: Field):
 
     print('field', field)
 
+    threadlocal_id = threadlocal.id
     # Subclass it and override _get_
     class TracingField(corresponding_field.__class__):
 
         def __get__(self, instance, owner):
             print('!')
-            if not originating_iterator.has_prefetched:
+            if not originating_iterator.has_prefetched and threadlocal_id == threadlocal.id:
                 update_iterator()
                 print('get!!s', field.name)
                 # print(QueryLogger.get_traceback(limit=3))
