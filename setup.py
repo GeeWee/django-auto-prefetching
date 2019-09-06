@@ -18,7 +18,7 @@ URL = "https://github.com/GeeWee/django-auto-prefetching"
 EMAIL = "gustavwengel@gmail.com"
 AUTHOR = "Gustav Wengel"
 REQUIRES_PYTHON = ">=3.7.0"
-VERSION = "0.1.6"
+VERSION = "0.1.7"
 
 # What packages are required for this module to be executed?
 REQUIRED = ["django ~= 2.2"]
@@ -76,10 +76,16 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+        return_code = os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+        if return_code != 0:
+            self.status(f"Error building: {return_code}")
+            sys.exit()
 
         self.status("Uploading the package to PyPI via Twine…")
-        os.system("twine upload dist/*")
+        return_code = os.system("twine upload dist/*")
+        if return_code != 0:
+            self.status(f"Error building: {return_code}")
+            sys.exit()
 
         self.status("Pushing git tags…")
         os.system("git tag v{0}".format(about["__version__"]))
