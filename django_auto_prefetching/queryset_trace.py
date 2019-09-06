@@ -1,9 +1,9 @@
 import copy
 import logging
+from contextlib import contextmanager
 from typing import Iterator
 
 from django.db.models import QuerySet, Field
-from django_auto_prefetching.ModelProxy import proxy_model_class
 
 from django_auto_prefetching.utils import PrefetchDescription
 
@@ -13,6 +13,7 @@ logger.setLevel(logging.DEBUG)
 
 def trace_queryset(queryset):
     logger.debug('Tracing a queryset')
+    # TODO what about error handling if we fail in the middle of the .all() call?
     queryset.__class__ = TracingQuerySet
     return queryset
 
@@ -31,10 +32,12 @@ class ProxyingIterator:
         self.originating_queryset = originating_queryset
         self.pk_cache = set()
         self.has_prefetched = False
+        self.reverse = None
 
     def __next__(self):
         prefetch_fields: PrefetchDescription = getattr(self, '_django_auto_prefetching_should_prefetch_fields', None)
         if prefetch_fields and not self.has_prefetched:
+            self.reverse()
             logger.debug(f'Commencing automatic pre-fetching with fields {prefetch_fields}')
 
             # This is a copy of the queryset without the cache, and the special methods
@@ -61,22 +64,28 @@ class ProxyingIterator:
             return obj
 
         self.pk_cache.add(obj.pk)
-        proxied_object = proxy_model_class(obj, '', self)
+
+        self.reverse = proxied_model(obj, self)
         logging.debug('Returning proxied model')
-        return proxied_object
+        return obj
 
 
-def proxy_model_class(model, prefix, originating_iterator):
+def proxied_model(model, originating_iterator):
     if not hasattr(originating_iterator, '_django_auto_prefetching_should_prefetch_fields'):
         originating_iterator._django_auto_prefetching_should_prefetch_fields = PrefetchDescription(set(), set())
 
-    # Change model class here, so it won't carryover to the rest of the models
-    # model.__class__ = ModelProxy
+    reverse_functions = []
 
     for field in model._meta.get_fields():
-        monkey_patch_field(originating_iterator, model, field)
+        reverse_function = monkey_patch_field(originating_iterator, model, field)
+        reverse_functions.append(reverse_function)
 
-    return model
+    def reverse():
+        for func in reverse_functions:
+            if func is not None:
+                func()
+
+    return reverse
 
 
 def monkey_patch_field(originating_iterator, model, field: Field):
@@ -104,9 +113,10 @@ def monkey_patch_field(originating_iterator, model, field: Field):
     print('field', field)
 
     # Subclass it and override _get_
-    class FieldSubclass(corresponding_field.__class__):
+    class TracingField(corresponding_field.__class__):
 
         def __get__(self, instance, owner):
+            print('!')
             if not originating_iterator.has_prefetched:
                 update_iterator()
                 print('get!!s', field.name)
@@ -115,4 +125,15 @@ def monkey_patch_field(originating_iterator, model, field: Field):
 
             return super().__get__(instance, owner)
 
-    corresponding_field.__class__ = FieldSubclass
+    # Build revert function
+    original_class = corresponding_field.__class__
+
+    def reverse_class_change():
+        logger.debug(
+            f"Reverting field {field.name} from {corresponding_field.__class__} to original class {original_class}")
+        corresponding_field.__class__ = original_class
+
+    # Change class
+    corresponding_field.__class__ = TracingField
+
+    return reverse_class_change
