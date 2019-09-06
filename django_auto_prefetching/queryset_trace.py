@@ -3,14 +3,14 @@ import logging
 import threading
 import uuid
 from contextlib import contextmanager
+from pprint import pprint
 from typing import Iterator
 
 from django.db.models import QuerySet, Field
 
+from django_auto_prefetching import dap_logger
 from django_auto_prefetching.utils import PrefetchDescription
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 
 """
 Generate a threadlocal uuid here, in case multiple threads try to use the model simultaneously, we'll want the fields
@@ -19,13 +19,13 @@ was created, matches the uuid when the __get__ lookup happens
 """
 
 threadlocal = threading.local()
-threadlocal.id = uuid.uuid4()
 
 
 @contextmanager
 def trace_queryset(queryset):
     try:
-        logger.debug('Tracing a queryset')
+        threadlocal.id = uuid.uuid4()
+        dap_logger.error('Tracing a queryset')
         queryset.__class__ = TracingQuerySet
         yield queryset
     finally:
@@ -42,7 +42,7 @@ class TracingQuerySet(QuerySet):
     def __iter__(self):
         if self.spent:
             raise NotImplementedError('Cannot use a TracingQueryset multiple times')
-        logger.debug("Proxying Queryset iterator")
+        dap_logger.info("Proxying Queryset iterator")
         iterator = super().__iter__()
         return ProxyingIterator(iterator, self)
 
@@ -59,7 +59,7 @@ class ProxyingIterator:
         prefetch_fields: PrefetchDescription = getattr(self, '_django_auto_prefetching_should_prefetch_fields', None)
         if prefetch_fields and not self.has_prefetched:
             self.originating_queryset.revert_changes()
-            logger.debug(f'Commencing automatic pre-fetching with fields {prefetch_fields}')
+            dap_logger.info(f'Commencing automatic pre-fetching with fields {prefetch_fields}')
 
             # This is a copy of the queryset without the cache, and the special methods
             copied_queryset: QuerySet = copy.deepcopy(self.originating_queryset)
@@ -73,22 +73,22 @@ class ProxyingIterator:
             self.has_prefetched = True
 
         obj = next(self.iterator)
-        logging.debug(f'Iterator supplying next model {obj.pk}')
+        dap_logger.info(f'Iterator supplying next model {obj.pk}')
         # If we've already been over the object, don't return it
         if obj.pk in self.pk_cache:
-            logging.debug(f'Skipping model with pk <{obj.pk}>')
+            dap_logger.info(f'Skipping model with pk <{obj.pk}>')
             return next(self)
 
         # No need to wrap in a proxy if we've spent our prefetch
         if self.has_prefetched:
-            # logging.debug("Returning object as-is, as we've already prefetched")
+            # dap_logger.info("Returning object as-is, as we've already prefetched")
             return obj
 
         self.pk_cache.add(obj.pk)
 
         self.originating_queryset.revert_changes = proxied_model(obj, self)
 
-        logging.debug('Returning proxied model')
+        dap_logger.info('Returning proxied model')
         return obj
 
 
@@ -126,13 +126,15 @@ def monkey_patch_field(originating_iterator, model, field: Field):
             originating_iterator._django_auto_prefetching_should_prefetch_fields.prefetch_related.add(field.name)
 
     relational_field = field
-    logger.debug(f'Patching relational field "{field.name}"')
+    dap_logger.info(f'Patching relational field "{field.name}"')
 
     # Get the field without invoking __get__ to get the actual class and not the
     # data descriptor value
     corresponding_field = model.__class__.__dict__.get(field.name)
 
     print('field', field)
+    print('threadlocal')
+    pprint(threadlocal)
 
     threadlocal_id = threadlocal.id
     # Subclass it and override _get_
@@ -152,7 +154,7 @@ def monkey_patch_field(originating_iterator, model, field: Field):
     original_class = corresponding_field.__class__
 
     def reverse_class_change():
-        logger.debug(
+        dap_logger.info(
             f"Reverting field {field.name} from {corresponding_field.__class__} to original class {original_class}")
         corresponding_field.__class__ = original_class
 

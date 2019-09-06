@@ -2,7 +2,6 @@
 A package for automatic prefetching of data with select_related and prefetch_related in Django and django-rest-framework
 """
 import inspect
-import logging
 from typing import Type, Union
 
 from django.contrib.admin import ModelAdmin
@@ -12,17 +11,19 @@ from rest_framework.relations import (
     ManyRelatedField,
     HyperlinkedRelatedField,
 )
+
 from rest_framework.serializers import ModelSerializer, BaseSerializer, ListSerializer
 
-logger = logging.getLogger("django-auto-prefetching")
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.WARNING)
+from django_auto_prefetching.logging import dap_logger
+
+from django_auto_prefetching.queryset_trace import trace_queryset
+
 
 class AutoPrefetchModelAdmin(ModelAdmin):
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        # How to decorate the queryset here...?!
-
+        # return super().get_queryset(request)
+        with trace_queryset(super().get_queryset(request)) as qs:
+            return qs
 
 
 
@@ -57,9 +58,9 @@ def _prefetch(
     """
     prepend = f"{path}__" if path is not None else ""
     class_name = getattr(serializer, "__name__", serializer.__class__.__name__)
-    logger.debug("\n")
+    dap_logger.info("\n")
 
-    logger.debug(
+    dap_logger.info(
         f'{" " * indentation}LOOKING AT SERIALIZER: {class_name} from path: {prepend}'
     )
 
@@ -82,7 +83,7 @@ def _prefetch(
 
     for name, field_instance in fields:
         field_type_name = field_instance.__class__.__name__
-        logger.debug(
+        dap_logger.info(
             f'{" " * indentation} Field "{name}", type: {field_type_name}, src: "{field_instance.source}"'
         )
 
@@ -90,14 +91,14 @@ def _prefetch(
         if isinstance(
             field_instance, (BaseSerializer, RelatedField, ManyRelatedField)
         ) and not isinstance(field_instance, IGNORED_FIELD_TYPES):
-            logger.debug(
+            dap_logger.info(
                 f'{" " * indentation}Found related: {field_type_name} ({type(field_instance)}) - recursing deeper'
             )
             field_path = f"{prepend}{field_instance.source}"
 
             # Fields where the field name *is* the model.
             if isinstance(field_instance, RelatedField):
-                logger.debug(
+                dap_logger.info(
                     f'{" " * indentation} Found related field: {field_type_name} - selecting {field_instance.source}'
                 )
                 select_related.add(f"{prepend}{field_instance.source}")
@@ -107,7 +108,7 @@ def _prefetch(
                 We also need to do this for all further calls
                 """
             elif isinstance(field_instance, (ListSerializer, ManyRelatedField)):
-                logger.debug(
+                dap_logger.info(
                     f'{" " * indentation} Found *:m relation: {field_type_name}'
                 )
                 prefetch_related.add(field_path)
@@ -119,7 +120,7 @@ def _prefetch(
                 prefetch_related |= select
                 prefetch_related |= prefetch
             else:
-                logger.debug(
+                dap_logger.info(
                     f'{" " * indentation} Found *:1 relation: {field_type_name}'
                 )
                 select_related.add(field_path)

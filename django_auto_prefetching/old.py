@@ -2,9 +2,9 @@ import logging
 
 from django.db.models import Field
 
+from django_auto_prefetching import dap_logger
 from django_auto_prefetching.utils import PrefetchDescription
 
-logger = logging.getLogger()
 
 def get_related_fields_for_model(model, depth, fields=None) -> Tuple[set, set]:
     """
@@ -37,7 +37,7 @@ def recurse_on_model(model, depth, fields, previous_relation_string, previous_mo
     select_related_fields = set()
     prefetch_related_fields = set()
 
-    logger.debug(
+    dap_logger.info(
         f"Recursing on model {model.__name__}, with depth: {depth} and previous relation string {previous_relation_string}"
     )
 
@@ -59,14 +59,14 @@ def recurse_on_model(model, depth, fields, previous_relation_string, previous_mo
 
         # ---------- PREFETCH RELATED ---------
         if field.many_to_many or field.one_to_many:
-            logger.debug(f'Treating field "{name}" as a prefetch_related field')
+            dap_logger.info(f'Treating field "{name}" as a prefetch_related field')
 
             # ADD CURRENT FIELD
             prefetch_related_fields.add(current_field_name)
 
             # RECURSE DOWN TO ADD MORE FIELDS
             if depth > 1:
-                logger.debug(
+                dap_logger.info(
                     f"Following relation to prefetch_related model {related_model.__name__}"
                 )
                 select_related, prefetch_related = recurse_on_model(
@@ -77,25 +77,24 @@ def recurse_on_model(model, depth, fields, previous_relation_string, previous_mo
 
         # --------- SELECT RELATED -----------
         elif field.one_to_one or field.many_to_one:
-            logger.debug(f'Treating field "{name}" as a select_related field')
+            dap_logger.info(f'Treating field "{name}" as a select_related field')
 
             # ADD CURRENT FIELD
             select_related_fields.add(current_field_name)
 
             # RECURSE DOWN TO ADD MORE FIELDS
             if depth > 1:
-                logger.debug(f"Following relation to select_related model {related_model.__name__}")
+                dap_logger.info(f"Following relation to select_related model {related_model.__name__}")
                 select_related, prefetch_related = recurse_on_model(
                     related_model, depth - 1, None, current_field_name, model
                 )
                 select_related_fields |= select_related
                 prefetch_related_fields |= prefetch_related
 
-    logger.debug(f'DONE WITH MODEL {model.__name__} from "{previous_relation_string}"')
+    dap_logger.info(f'DONE WITH MODEL {model.__name__} from "{previous_relation_string}"')
     return select_related_fields, prefetch_related_fields
 
 
-@log_return_value(logger.debug)
 def calculate_field_name(field):
     """
     This is a method to calculate the field name for the prefetch_related/select_related string. We can't just use
@@ -143,7 +142,7 @@ def get_cached_fields_for_model(self, model, prefix='', prefetch_fields=None, pr
     if not prefetch_fields:
         prefetch_fields = PrefetchDescription(set(), set())
 
-    logger.debug(
+    dap_logger.info(
         f"{' ' * indent}Recursing on model {model.__class__.__name__} and previous relation string '{prefix}', indent={indent}"
     )
 
@@ -155,10 +154,10 @@ def get_cached_fields_for_model(self, model, prefix='', prefetch_fields=None, pr
 
         if not self.is_field_cached(field, model):
             # If it hasn't been cached in the first model, it means that it hasn't been accessed
-            logger.debug(f'{" " * indent}Model field "{field.name}" was not cached during first iteration')
+            dap_logger.info(f'{" " * indent}Model field "{field.name}" was not cached during first iteration')
             continue
 
-        logger.debug(f'{" " * indent}Model field "{field.name}" was cached during first visit..')
+        dap_logger.info(f'{" " * indent}Model field "{field.name}" was cached during first visit..')
 
         # Calculate some things we need here
         related_model_cls = field.related_model
@@ -171,7 +170,7 @@ def get_cached_fields_for_model(self, model, prefix='', prefetch_fields=None, pr
         # Where we'd still end up recursing infinitely
         # TODO this should probably be more sophisticated
         if previous_model_cls and related_model_cls == previous_model_cls:
-            logger.debug("Skipping over relation back to original model")
+            dap_logger.info("Skipping over relation back to original model")
             continue
 
         if field.one_to_one or field.many_to_one:
@@ -179,7 +178,7 @@ def get_cached_fields_for_model(self, model, prefix='', prefetch_fields=None, pr
 
             cached_model = getattr(model, field.name)
             # Here we'll want to keep going, to fetch nested models
-            logger.debug(f'{" " * indent} Found cached field "{field_prefetch_string}", following:')
+            dap_logger.info(f'{" " * indent} Found cached field "{field_prefetch_string}", following:')
 
             # OneToOneField if we own the field, and OneToOneRel if not
             self.get_cached_fields_for_model(cached_model, f'{field_prefetch_string}__', prefetch_fields,
@@ -198,10 +197,10 @@ def get_cached_fields_for_model(self, model, prefix='', prefetch_fields=None, pr
 #     # Now we check whether or not it's been cached
 #     is_cached_already = relational_field.is_cached(unproxied_model)
 #     if is_cached_already:
-#         logger.debug(f'Model field "{name}" was cached already.')
+#         dap_logger.info(f'Model field "{name}" was cached already.')
 #         return getattr(unproxied_model, name)
 #
-#     logger.debug(f'Model field "{name}" was not cached already. Prefetching it on next iteration')
+#     dap_logger.info(f'Model field "{name}" was not cached already. Prefetching it on next iteration')
 #     qs = self.queryset
 #
 #     # Put the description on the queryset
@@ -239,7 +238,7 @@ class ModelProxy(wrapt.ObjectProxy):
     def __getattribute__(self, name):
         # Here we need to look at whether or not we've tried to prefetch with this queryset. If we have
         # skip this whole thing.
-        logger.debug(f'ModelProxy getattr called with "{name}"')
+        dap_logger.info(f'ModelProxy getattr called with "{name}"')
         unproxied_model = object.__getattribute__(self, '__wrapped__')
 
         model_fields = unproxied_model._meta.get_fields()
@@ -249,7 +248,7 @@ class ModelProxy(wrapt.ObjectProxy):
 
             if field.name == name and field.is_relation:
                 relational_field = field
-                logger.debug(f'Trying to access relational field "{name}"')
+                dap_logger.info(f'Trying to access relational field "{name}"')
                 break
 
         if not relational_field:
@@ -258,10 +257,10 @@ class ModelProxy(wrapt.ObjectProxy):
         # Now we check whether or not it's been cached
         is_cached_already = relational_field.is_cached(unproxied_model)
         if is_cached_already:
-            logger.debug(f'Model field "{name}" was cached already.')
+            dap_logger.info(f'Model field "{name}" was cached already.')
             return getattr(unproxied_model, name)
 
-        logger.debug(f'Model field "{name}" was not cached already. Prefetching it on next iteration')
+        dap_logger.info(f'Model field "{name}" was not cached already. Prefetching it on next iteration')
         qs = self.queryset
 
         # Put the description on the queryset
