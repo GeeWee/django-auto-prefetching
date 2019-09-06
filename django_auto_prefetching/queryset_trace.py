@@ -2,23 +2,27 @@ import copy
 import logging
 from typing import Iterator
 
+import wrapt
+from django.db.models import QuerySet
+
 from django_auto_prefetching.prefetch_description import PrefetchDescription
 from django_auto_prefetching.proxy import Proxy
-from django_auto_prefetching.ModelProxy import ModelProxy
+from django_auto_prefetching.ModelProxy import ModelProxy, proxy_model_class
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 def trace_queryset(queryset):
     logger.debug('Tracing a queryset')
-    return TracingQuerySet(queryset)
+    queryset.__class__ = TracingQuerySet
+    return queryset
 
 
-class TracingQuerySet(Proxy):
+class TracingQuerySet(QuerySet):
     def __iter__(self):
         logger.debug("Proxying Queryset iterator")
-        unproxied = object.__getattribute__(self, '_obj')
-        return ProxyingIterator(iter(unproxied), self)
+        iterator = super().__iter__()
+        return ProxyingIterator(iterator, self)
 
 class ProxyingIterator:
     def __init__(self, iterator: Iterator, originating_queryset: TracingQuerySet) -> None:
@@ -29,13 +33,13 @@ class ProxyingIterator:
         self.has_prefetched = False
 
     def __next__(self):
-
-        prefetch_fields: PrefetchDescription = getattr(self.originating_queryset, '_django_auto_prefetching_should_prefetch_fields', None)
+        prefetch_fields: PrefetchDescription = getattr(self, '_django_auto_prefetching_should_prefetch_fields', None)
         if prefetch_fields and not self.has_prefetched:
             logger.debug(f'Commencing automatic pre-fetching with fields {prefetch_fields}')
 
             # This is a copy of the queryset without the cache, and the special methods
-            copied_queryset: TracingQuerySet = copy.deepcopy(self.originating_queryset)
+            copied_queryset: QuerySet = copy.deepcopy(self.originating_queryset)
+            copied_queryset.__class__ = QuerySet
 
             copied_queryset = copied_queryset.select_related(*prefetch_fields.select_related)
             copied_queryset = copied_queryset.prefetch_related(*prefetch_fields.prefetch_related)
@@ -53,10 +57,10 @@ class ProxyingIterator:
 
         # No need to wrap in a proxy if we've spent our prefetch
         if self.has_prefetched:
-            logging.debug("Returning object as-is, as we've already prefetched")
+            # logging.debug("Returning object as-is, as we've already prefetched")
             return obj
 
         self.pk_cache.add(obj.pk)
-        proxied_object = ModelProxy(obj, self.originating_queryset, '')
+        proxied_object = proxy_model_class(obj, '', self)
         logging.debug('Returning proxied model')
         return proxied_object

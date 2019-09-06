@@ -12,6 +12,8 @@ django-extensions = "*"
 django-debug-toolbar = "*"
 
 [packages]
+#TODO this might not be needed
+wrapt = "*"
 
 [requires]
 python_version = "3.7"
