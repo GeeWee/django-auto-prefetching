@@ -215,3 +215,6 @@ class TestTracingQuerySetErrorHandling(TestCase):
                 print(i)
 
         self.assertEqual(type(Parent.__dict__['children_b']), ReverseManyToOneDescriptor)
+
+
+    # TODO test that it also restores the fields for nested relations

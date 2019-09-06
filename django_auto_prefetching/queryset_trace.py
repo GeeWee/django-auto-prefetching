@@ -148,6 +148,8 @@ def monkey_patch_field(originating_iterator, model, field: Field):
                 # print(QueryLogger.get_traceback(limit=3))
                 print('attaching to queryset')
 
+            # TODO here what you want to do is get the model, and then calculate the correct prefix, and
+            # then run monkey_patch_fields again with the new prefix, so that we also prefetch nested relations
             return super().__get__(instance, owner)
 
     # Build revert function
