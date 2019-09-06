@@ -1,5 +1,7 @@
 import traceback
 from contextlib import contextmanager
+from dataclasses import dataclass
+from typing import Set
 
 from django.db import connection
 
@@ -11,6 +13,7 @@ def log_queries():
         yield
     ql.print_queries()
     ql.print_stats()
+
 
 class QueryLogger:
     """
@@ -57,3 +60,9 @@ class QueryLogger:
 
     def print_stats(self):
         print(f"TOTAL Queries: {len(self.queries)}")
+
+
+@dataclass
+class PrefetchDescription:
+    prefetch_related: Set
+    select_related: Set

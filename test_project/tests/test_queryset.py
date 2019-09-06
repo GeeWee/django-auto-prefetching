@@ -2,7 +2,7 @@ import logging
 
 from django.db import connection
 
-from django_auto_prefetching.QueryLogger import QueryLogger, log_queries
+from django_auto_prefetching.utils import log_queries, QueryLogger
 
 logging.basicConfig(level=logging.DEBUG)
 
