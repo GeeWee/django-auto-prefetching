@@ -36,8 +36,12 @@ def trace_queryset(queryset):
 class TracingQuerySet(QuerySet):
     spent = False
 
+    revert_functions = []
+
     def revert_changes(self):
-        pass
+        for function in self.revert_functions:
+            function()
+
 
     def __iter__(self):
         if self.spent:
@@ -59,7 +63,7 @@ class ProxyingIterator:
         prefetch_fields: PrefetchDescription = getattr(self, '_django_auto_prefetching_should_prefetch_fields', None)
         if prefetch_fields and not self.has_prefetched:
             self.originating_queryset.revert_changes()
-            dap_logger.info(f'Commencing automatic pre-fetching with fields {prefetch_fields}')
+            dap_logger.info(f'!!!!!Commencing automatic pre-fetching with fields {prefetch_fields}')
 
             # This is a copy of the queryset without the cache, and the special methods
             copied_queryset: QuerySet = copy.deepcopy(self.originating_queryset)
@@ -86,81 +90,94 @@ class ProxyingIterator:
 
         self.pk_cache.add(obj.pk)
 
-        self.originating_queryset.revert_changes = proxied_model(obj, self)
+        monkey_patch_model(obj, self, '')
 
-        dap_logger.info('Returning proxied model')
+        # dap_logger.info(f'Returning proxied model {}: ')
         return obj
 
 
-def proxied_model(model, originating_iterator):
+def monkey_patch_model(model, originating_iterator, prefix):
+    dap_logger.debug(f'Monkeypatching {model.__class__} with prefix "{prefix}"')
     if not hasattr(originating_iterator, '_django_auto_prefetching_should_prefetch_fields'):
         originating_iterator._django_auto_prefetching_should_prefetch_fields = PrefetchDescription(set(), set())
 
-    reverse_functions = []
 
     for field in model._meta.get_fields():
-        reverse_function = monkey_patch_field(originating_iterator, model, field)
-        reverse_functions.append(reverse_function)
-
-    def reverse():
-        for func in reverse_functions:
-            if func is not None:
-                func()
-
-    return reverse
+        monkey_patch_field(originating_iterator, model, field, prefix)
 
 
-def monkey_patch_field(originating_iterator, model, field: Field):
+# TODO we need to special case a prefetch_related branch here
+def monkey_patch_field(originating_iterator, model, field: Field, prefix: str):
     if not field.is_relation:
         return
 
     if field.one_to_one or field.many_to_one:
         def update_iterator():
-            originating_iterator._django_auto_prefetching_should_prefetch_fields.select_related.add(field.name)
+            name = f'{prefix}{field.name}'
+            logging.debug(f"Updating iterator to select_related {name}")
+            originating_iterator._django_auto_prefetching_should_prefetch_fields.select_related.add(name)
     elif field.one_to_many:
-        def update_iterator():
-            originating_iterator._django_auto_prefetching_should_prefetch_fields.prefetch_related.add(field.name)
+        logging.debug(f'Not patching 1->many field "{field.name}"')
+        return
     else:
-        # Else many to many
-        def update_iterator():
-            originating_iterator._django_auto_prefetching_should_prefetch_fields.prefetch_related.add(field.name)
-
-    relational_field = field
-    dap_logger.info(f'Patching relational field "{field.name}"')
+        logging.debug(f'Not patching many->many field "{field.name}"')
+        return
 
     # Get the field without invoking __get__ to get the actual class and not the
     # data descriptor value
     corresponding_field = model.__class__.__dict__.get(field.name)
 
-    print('field', field)
-    print('threadlocal')
-    pprint(threadlocal)
-
     threadlocal_id = threadlocal.id
+
     # Subclass it and override _get_
     class TracingField(corresponding_field.__class__):
+        exhausted = False
 
         def __get__(self, instance, owner):
-            print('!')
-            if not originating_iterator.has_prefetched and threadlocal_id == threadlocal.id:
-                update_iterator()
-                print('get!!s', field.name)
-                # print(QueryLogger.get_traceback(limit=3))
-                print('attaching to queryset')
+            dap_logger.debug(f'get: "{field.name}"')
 
-            # TODO here what you want to do is get the model, and then calculate the correct prefix, and
-            # then run monkey_patch_fields again with the new prefix, so that we also prefetch nested relations
-            return super().__get__(instance, owner)
+            if originating_iterator.has_prefetched or threadlocal_id != threadlocal.id or self.exhausted:
+                logging.debug('TracingField should not modify anything.')
+                return super().__get__(instance, owner)
+
+            update_iterator()
+
+
+            model =  super().__get__(instance, owner)
+            # Monkey patch the model we get with the new prefix
+            new_prefix = f'{prefix}{calculate_field_name(field)}__'
+
+            monkey_patch_model(model, originating_iterator, new_prefix)
+
+            self.exhausted = True
+
+            return model
+
 
     # Build revert function
     original_class = corresponding_field.__class__
 
     def reverse_class_change():
         dap_logger.info(
-            f"Reverting field {field.name} from {corresponding_field.__class__} to original class {original_class}")
+            f'Reverting field "{field.name}" from {corresponding_field.__class__} to original class {original_class}')
         corresponding_field.__class__ = original_class
 
     # Change class
     corresponding_field.__class__ = TracingField
 
-    return reverse_class_change
+    # Append the reverse function to the queryset
+    originating_iterator.originating_queryset.revert_functions.append(reverse_class_change)
+
+
+def calculate_field_name(field: Field) -> str:
+    """
+    This is a method to calculate the field name for the prefetch_related/select_related string. We can't just use
+    field.name, as that seems to return the wrong name for ForeignKeys, without a 'related' name (e.g. 'containers' (model in plural) instead
+    of 'container_set' which is the correct reverse lookup.
+    """
+    # If it's a many to one without the related_name set, mimick djangos behaviour and create the field name with _set afterwards
+    if field.many_to_many or field.one_to_many and getattr(field, "related_name", None) is None:
+        # a _set field name
+        return field.name + "_set"
+
+    return field.name

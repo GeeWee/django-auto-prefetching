@@ -112,18 +112,6 @@ def calculate_field_name(field):
 """ New implementation for django-auto-prefetching """
 
 
-def calculate_field_name(self, field: Field) -> str:
-    """
-    This is a method to calculate the field name for the prefetch_related/select_related string. We can't just use
-    field.name, as that seems to return the wrong name for ForeignKeys, without a 'related' name (e.g. 'containers' (model in plural) instead
-    of 'container_set' which is the correct reverse lookup.
-    """
-    # If it's a many to one without the related_name set, mimick djangos behaviour and create the field name with _set afterwards
-    if field.many_to_many or field.one_to_many and getattr(field, "related_name", None) is None:
-        # a _set field name
-        return field.name + "_set"
-
-    return field.name
 
 
 def is_field_cached(self, field, model):

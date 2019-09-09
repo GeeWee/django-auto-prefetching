@@ -1,11 +1,12 @@
 import logging
 
 from django.db import connection
-from django.db.models.fields.related_descriptors import ReverseManyToOneDescriptor
+from django.db.models.fields.related_descriptors import ReverseManyToOneDescriptor, ForwardOneToOneDescriptor, \
+    ForwardManyToOneDescriptor, ReverseOneToOneDescriptor
 
 from django_auto_prefetching.utils import log_queries, QueryLogger
 
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 from django.db.models import QuerySet
 from django.test import TestCase
@@ -125,38 +126,41 @@ class TestTracingQuerySet(TestCase):
                     for kid in i.children_b.all():
                         print('----------------> kid', kid)
 
-    # def test_tracing_queryset_will_fetch_deeply_nested_relations_one_to_one_and_many_to_one_relations(self):
-    #     for i in range(0, 5):
-    #         car = ParentCar.objects.create()
-    #         parent = DeeplyNestedParent.objects.create(
-    #             car=car,
-    #         )
-    #         parent2 = DeeplyNestedParent.objects.create(
-    #             car=car,
-    #         )
-    #         child = DeeplyNestedChild.objects.create(
-    #             parent=parent
-    #         )
-    #         child2 = DeeplyNestedChild.objects.create(
-    #             parent=parent2
-    #         )
-    #
-    #
-    #     # Here we should get only four queries.
-    #     # 1. For the .all call
-    #     # 2. For the .parent call
-    #     # 3. For the .parent.car call
-    #     # 4  For the internal .all() call with select_related of the other objects
-    #     with self.assertNumQueries(4):
-    #         original_queryset = DeeplyNestedChild.objects.all()
-    #         qs = trace_queryset(original_queryset)
-    #
-    #
-    #         for i in qs:
-    #             print('-------->')
-    #             print(i.parent.car)
-    #             print('-------->')
-    #             print(i.parent.car)
+    def test_tracing_queryset_will_fetch_deeply_nested_relations_one_to_one_and_many_to_one_relations(self):
+        for i in range(0, 5):
+            car = ParentCar.objects.create()
+            parent = DeeplyNestedParent.objects.create(
+                car=car,
+            )
+            parent2 = DeeplyNestedParent.objects.create(
+                car=car,
+            )
+            child = DeeplyNestedChild.objects.create(
+                parent=parent
+            )
+            child2 = DeeplyNestedChild.objects.create(
+                parent=parent2
+            )
+
+
+        # Here we should get only four queries.
+        # 1. For the .all call
+        # 2. For the .parent call
+        # 3. For the .parent.car call
+        # 4  For the internal .all() call with select_related of the other objects
+        with self.assertNumQueries(4):
+            original_queryset = DeeplyNestedChild.objects.all()
+            with trace_queryset(original_queryset) as qs:
+                for i in qs:
+                    print('-------->')
+                    str(i.parent.car)
+                    print('-------->')
+                    str(i.parent.car)
+
+
+
+
+
 
 
 class TestTracingQuerySetErrorHandling(TestCase):
@@ -217,4 +221,45 @@ class TestTracingQuerySetErrorHandling(TestCase):
         self.assertEqual(type(Parent.__dict__['children_b']), ReverseManyToOneDescriptor)
 
 
-    # TODO test that it also restores the fields for nested relations
+    def test_tracing_queryset_will_restore_fields_for_deeply_nested_relations(self):
+        for i in range(0, 5):
+            car = ParentCar.objects.create()
+            parent = DeeplyNestedParent.objects.create(
+                car=car,
+            )
+            parent2 = DeeplyNestedParent.objects.create(
+                car=car,
+            )
+            child = DeeplyNestedChild.objects.create(
+                parent=parent
+            )
+            child2 = DeeplyNestedChild.objects.create(
+                parent=parent2
+            )
+
+
+        # Here we should get only four queries.
+        # 1. For the .all call
+        # 2. For the .parent call
+        # 3. For the .parent.car call
+        # 4  For the internal .all() call with select_related of the other objects
+        with self.assertNumQueries(4):
+            original_queryset = DeeplyNestedChild.objects.all()
+            with trace_queryset(original_queryset) as qs:
+                for i in qs:
+                    print('-------->')
+                    str(i.parent.car)
+                    print('-------->')
+                    str(i.parent.car)
+
+        # Assert child is normal
+        self.assertEqual(type(DeeplyNestedChild.__dict__['parent']), ForwardOneToOneDescriptor)
+
+
+        # Assert parent is normal
+        self.assertEqual(type(DeeplyNestedParent.__dict__['children_set']), ReverseManyToOneDescriptor)
+        self.assertEqual(type(DeeplyNestedParent.__dict__['car']), ForwardManyToOneDescriptor)
+        self.assertEqual(type(DeeplyNestedParent.__dict__['child']), ReverseOneToOneDescriptor)
+
+        # Assert car is normal
+        self.assertEqual(type(ParentCar.__dict__['deeplynestedparent_set']), ReverseManyToOneDescriptor)
