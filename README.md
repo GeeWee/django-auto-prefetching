@@ -7,7 +7,7 @@ calls for your django-rest-framework code. It does this by inspecting your seria
 they use, and what models they refer to, and automatically calculating what needs to be prefetched.
 
 ## Installation
-`pip install django_auto_prefetching`
+`pip install django-auto-prefetching`
 
 ## AutoPrefetchViewSetMixin
 This is a ViewSet mixin you can use, which will automatically prefetch the needed objects from the database.
