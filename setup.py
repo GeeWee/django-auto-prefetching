@@ -18,7 +18,7 @@ URL = "https://github.com/GeeWee/django-auto-prefetching"
 EMAIL = "gustavwengel@gmail.com"
 AUTHOR = "Gustav Wengel"
 REQUIRES_PYTHON = ">=3.6.9"
-VERSION = "0.1.7"
+VERSION = "0.1.8"
 
 # What packages are required for this module to be executed?
 REQUIRED = ["django >= 2.2"]
