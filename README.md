@@ -1,5 +1,6 @@
 
 # Django Auto-Prefetching
+[![<GeeWee>](https://circleci.com/gh/GeeWee/django-auto-prefetching.svg?style=shield)](https://app.circleci.com/pipelines/github/GeeWee/django-auto-prefetching)
 *Never worry about n+1 performance problems again*
 
 This project aims to automatically perform the correct `select_related` and `prefetch_related`
@@ -45,7 +46,7 @@ class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelVi
             queryset = queryset.select_related('my_extra_field')
             return django_auto_prefetching.prefetch(queryset, self.serializer_class)
 ```
-
+t
 ## Supported Versions
 Currently the project is currently being tested against Python 3.6 and 3.7 and Django 2.2
 Pull Requests to support other versions are welcome.
