@@ -48,6 +48,7 @@ class GetQuerysetOverrideTest(TestCase):
             actions={"get": "list"}
         )
 
+        # Only 1 query as prefetch is called manually
         with self.assertNumQueries(1):
             data = view(self.factory.get("/")).data
             pprint_result(data)
