@@ -8,7 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.7.4
+      - image: themattrix/tox
         environment:
           PIPENV_VENV_IN_PROJECT: true
 
@@ -30,9 +30,14 @@ jobs:
             - v2-pip-deps-
 
       - run:
-          name: install dependencies
+          name: Get tox
           command: |
-            pipenv sync --dev
+            pip install tox --user
+
+      - run:
+          name: Test
+          command: |
+            python -m tox
 
       - save_cache:
           paths:
@@ -41,17 +46,8 @@ jobs:
             - '~/.cache/pip'
             - '~/.cache/pipenv'
             - './.venv'
+            - './.tox'
           key: v2-pip-deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
-      - run:
-          name: run tests
-          command: |
-            pipenv run python manage.py test
 
       - store_artifacts:
           path: test-reports
