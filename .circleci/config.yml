@@ -32,7 +32,7 @@ jobs:
       - run:
           name: Get tox
           command: |
-            pip install tox
+            pip install tox --user
 
       - run:
           name: Test
