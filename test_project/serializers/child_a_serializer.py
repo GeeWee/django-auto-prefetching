@@ -19,7 +19,6 @@ class ChildABrotherSerializerWithBrother(ModelSerializer):
 
 
 class ChildASerializer(ModelSerializer):
-    # brother = ChildABrotherSerializer(read_only=True)
 
     class Meta:
         model = ChildA
@@ -28,7 +27,6 @@ class ChildASerializer(ModelSerializer):
 
 
 class ChildASerializerWithNoRelations(ModelSerializer):
-    # brother = ChildABrotherSerializer(read_only=True)
 
     class Meta:
         model = ChildA

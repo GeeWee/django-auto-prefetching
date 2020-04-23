@@ -29,12 +29,13 @@ It supports all types of relational fields, (many to many, one to many, one to o
 ### Limitations
 The `AutoPrefetchViewSetMixin` cannot see what objects are being accessed in e.g. a `SerializerMethodField`.
 If you use objects in there, you might need to do some additional prefetches.
+If you do this and override `get_queryset`, you will have to call `prefetch` manually as the mixin code is never reached.
 
 ```python
-from django_auto_prefetching import AutoPrefetchViewSetMixin
+import django_auto_prefetching
 from rest_framework.viewsets import ModelViewSet
 
-class BaseModelViewSet(AutoPrefetchViewSetMixin, ModelViewSet):
+class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelViewSet):
     serializer_class = YourModelSerializer
     
     def get_queryset(self):
@@ -42,7 +43,7 @@ class BaseModelViewSet(AutoPrefetchViewSetMixin, ModelViewSet):
             # and leave the mixin to do the rest of the work
             queryset = YourModel.objects.all()
             queryset = queryset.select_related('my_extra_field')
-            return queryset
+            return django_auto_prefetching.prefetch(queryset, self.serializer_class)
 
 ```
 
