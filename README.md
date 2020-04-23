@@ -47,7 +47,7 @@ class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelVi
             queryset = queryset.select_related('my_extra_field')
             return django_auto_prefetching.prefetch(queryset, self.serializer_class)
 ```
-t
+
 ## Supported Versions
 Currently the project is currently being tested against Python 3.6 and 3.7 and Django 2.2
 Pull Requests to support other versions are welcome.
