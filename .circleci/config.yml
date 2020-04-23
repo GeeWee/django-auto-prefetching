@@ -49,16 +49,6 @@ jobs:
             - './.tox'
           key: v2-pip-deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
-      - run:
-          name: run tests
-          command: |
-            pipenv run python manage.py test
-
       - store_artifacts:
           path: test-reports
           destination: test-reports
