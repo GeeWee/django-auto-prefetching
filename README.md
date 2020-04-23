@@ -1,6 +1,7 @@
 
 # Django Auto-Prefetching
 [![<GeeWee>](https://circleci.com/gh/GeeWee/django-auto-prefetching.svg?style=shield)](https://app.circleci.com/pipelines/github/GeeWee/django-auto-prefetching)
+
 *Never worry about n+1 performance problems again*
 
 This project aims to automatically perform the correct `select_related` and `prefetch_related`
