@@ -3,18 +3,12 @@
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
 version: 2
-workflows:
-  version: 2
-  test:
-    jobs:
-      - test-3.7
-      - test-3.6
 jobs:
-  test-3.7: &test-template
+  build:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.7
+      - image: circleci/python:3.7.4
         environment:
           PIPENV_VENV_IN_PROJECT: true
 
@@ -36,9 +30,14 @@ jobs:
             - v2-pip-deps-
 
       - run:
-          name: install dependencies
+          name: Get tox
           command: |
-            pipenv sync --dev
+            pip install tox
+
+      - run:
+          name: Test
+          command: |
+            python -m tox
 
       - save_cache:
           paths:
@@ -47,6 +46,7 @@ jobs:
             - '~/.cache/pip'
             - '~/.cache/pipenv'
             - './.venv'
+            - './.tox'
           key: v2-pip-deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
       # run tests!
@@ -62,9 +62,3 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
-  test-3.6:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.6
-        environment:
-          PIPENV_VENV_IN_PROJECT: true
