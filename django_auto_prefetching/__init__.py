@@ -6,6 +6,7 @@ import logging
 from typing import Type, Union
 
 from django.core.exceptions import FieldError
+from django.db import models
 from rest_framework.relations import (
     RelatedField,
     ManyRelatedField,
@@ -18,6 +19,7 @@ logger = logging.getLogger("django-auto-prefetching")
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.WARNING)
 
+SERIALIZER_SOURCE_RELATION_SEPARATOR = '.'
 
 class AutoPrefetchViewSetMixin:
     def get_queryset(self):
@@ -30,9 +32,11 @@ class AutoPrefetchViewSetMixin:
 def prefetch(queryset, serializer: Type[ModelSerializer]):
     select_related, prefetch_related = _prefetch(serializer)
     try:
-        return queryset.select_related(*select_related).prefetch_related(
-            *prefetch_related
-        )
+        if select_related:
+            queryset = queryset.select_related(*select_related)
+        if prefetch_related:
+            queryset = queryset.prefetch_related(*prefetch_related)
+        return queryset
     except FieldError as e:
         raise ValueError(
             f"Calculated wrong field in select_related. Do you have a nested serializer for a ForeignKey where "
@@ -121,8 +125,22 @@ def _prefetch(
                 )
                 select_related |= select
                 prefetch_related |= prefetch
+        
+        elif SERIALIZER_SOURCE_RELATION_SEPARATOR in field_instance.source:
+            # The serializer declares a field from a related object.
+            relation_name = field_instance.source.split(SERIALIZER_SOURCE_RELATION_SEPARATOR)[0]
+            if is_model_relation(serializer.Meta.model, relation_name):
+                logger.debug(
+                    f'{" " * indentation} Found *:1 relation: {relation_name}'
+                )
+                select_related.add(relation_name)
 
     return (select_related, prefetch_related)
+
+def is_model_relation(model, field_name):
+    field = next((field for field in model._meta.fields if field.name == field_name), None)
+    return isinstance(field, models.ForeignKey) or isinstance(field, models.OneToOneField)
+
 
 
 IGNORED_FIELD_TYPES = (

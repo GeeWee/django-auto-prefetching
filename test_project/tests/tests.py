@@ -162,8 +162,6 @@ class TestOneToMany(TestCase):
         assert len(data) == 1
         assert data[0]["parent_text"] == "foo"
 
-    # Test one to one
-
 
 class TestManyToMany(TestCase):
     def setUp(self):
