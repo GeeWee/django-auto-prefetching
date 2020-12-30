@@ -17,7 +17,7 @@ class ChildABro(models.Model):
 class ChildB(models.Model):
     childB_text = models.TextField()
     parent = models.ForeignKey(
-        "test_project.TopLevel", on_delete=models.CASCADE, related_name="children_b"
+        "test_project.TopLevel", on_delete=models.CASCADE, related_name="children_b", null=True
     )
 
 
