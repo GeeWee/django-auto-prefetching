@@ -86,7 +86,11 @@ def _prefetch(
         # We potentially need to recurse deeper
         if isinstance(
             field_instance, (BaseSerializer, RelatedField, ManyRelatedField)
-        ) and not isinstance(field_instance, IGNORED_FIELD_TYPES):
+        ) and (
+            not isinstance(field_instance, IGNORED_FIELD_TYPES)
+        ) and (
+            type(getattr(serializer.Meta.model, name)) is not property
+        ):
             logger.debug(
                 f'{" " * indentation}Found related: {field_type_name} ({type(field_instance)}) - recursing deeper'
             )
