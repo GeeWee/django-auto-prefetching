@@ -49,7 +49,7 @@ class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelVi
 ```
 
 ## Supported Versions
-Currently the project is currently being tested against Python 3.6 and 3.7 and Django 2.2
+Currently the project is currently being tested against Python 3.8 and 3.9 and Django 3.2
 Pull Requests to support other versions are welcome.
 
 ## Maturity
