@@ -7,6 +7,13 @@ from typing import Type, Union
 
 from django.core.exceptions import FieldError
 from django.db import models
+from django.db.models.fields.related_descriptors import (
+    ForwardManyToOneDescriptor,
+    ForwardOneToOneDescriptor,
+    ReverseOneToOneDescriptor,
+    ReverseManyToOneDescriptor,
+    ManyToManyDescriptor,
+)
 from rest_framework.relations import (
     RelatedField,
     ManyRelatedField,
@@ -83,10 +90,27 @@ def _prefetch(
             f'{" " * indentation} Field "{name}", type: {field_type_name}, src: "{field_instance.source}"'
         )
 
+        attribute_type = (
+            hasattr(serializer, "Meta") and 
+            type(getattr(serializer.Meta.model, name, None))
+        )
         # We potentially need to recurse deeper
         if isinstance(
             field_instance, (BaseSerializer, RelatedField, ManyRelatedField)
-        ) and not isinstance(field_instance, IGNORED_FIELD_TYPES):
+        ) and (
+            not isinstance(field_instance, IGNORED_FIELD_TYPES)
+        ) and (
+            attribute_type is not property
+            or any(
+                attribute_type is descriptor for descriptor in (
+                    ForwardManyToOneDescriptor,
+                    ForwardOneToOneDescriptor,
+                    ReverseOneToOneDescriptor,
+                    ReverseManyToOneDescriptor,
+                    ManyToManyDescriptor,
+                )
+            )
+        ):
             logger.debug(
                 f'{" " * indentation}Found related: {field_type_name} ({type(field_instance)}) - recursing deeper'
             )
