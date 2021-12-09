@@ -29,15 +29,42 @@ logger.setLevel(logging.WARNING)
 SERIALIZER_SOURCE_RELATION_SEPARATOR = '.'
 
 class AutoPrefetchViewSetMixin:
+    auto_prefetch_excluded_fields = set()
+    auto_prefetch_extra_select_fields = set()
+    auto_prefetch_extra_prefetch_fields = set()
+
+    def get_auto_prefetch_excluded_fields(self):
+        return self.auto_prefetch_excluded_fields
+
+    def get_auto_prefetch_extra_select_fields(self):
+        return self.auto_prefetch_extra_select_fields
+
+    def get_auto_prefetch_extra_prefetch_fields(self):
+        return self.auto_prefetch_extra_prefetch_fields
+
     def get_queryset(self):
         serializer = self.get_serializer()
         qs = super().get_queryset()
 
-        return prefetch(qs, serializer)
+        kwargs = {
+            "excluded_fields": self.get_auto_prefetch_excluded_fields(),
+            "extra_select_fields": self.get_auto_prefetch_extra_select_fields(),
+            "extra_prefetch_fields": self.get_auto_prefetch_extra_prefetch_fields(),
+        }
+        return prefetch(qs, serializer, **kwargs)
 
 
-def prefetch(queryset, serializer: Type[ModelSerializer]):
+def prefetch(
+    queryset,
+    serializer: Type[ModelSerializer],
+    *,
+    excluded_fields=set(),
+    extra_select_fields=set(),
+    extra_prefetch_fields=set(),
+):
     select_related, prefetch_related = _prefetch(serializer)
+    select_related = (select_related | extra_select_fields) - excluded_fields
+    prefetch_related = (prefetch_related | extra_prefetch_fields) - excluded_fields
     try:
         if select_related:
             queryset = queryset.select_related(*select_related)
