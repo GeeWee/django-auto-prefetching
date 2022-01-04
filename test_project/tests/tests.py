@@ -1,10 +1,11 @@
 import logging
 from json import loads, dumps
 from pprint import pprint
+from django.db.models.query import prefetch_related_objects
 
 from django.test import TestCase
 from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework.test import APIRequestFactory
 from rest_framework.utils.serializer_helpers import ReturnList
 
@@ -50,7 +51,6 @@ from test_project.serializers.top_level_serializer import (
     TopLevelSerializerWithHyperlinkedIdentityField,
 )
 from test_project.views import ManyTwoSerializerOnlyFullRepresentationViewSet
-
 
 logger = logging.getLogger("django-auto-prefetching")
 logger.setLevel(level=logging.DEBUG)
@@ -182,7 +182,7 @@ class TestManyToMany(TestCase):
         model_two.model_one_set.create(one_text="two two")
 
     def test_it_prefetches_many_to_many_relationships_on_owning_side_with_only_primary_keys(
-        self
+            self
     ):
         data = _run_test(
             ManyOneSerializerOnlyPrimaryKey, ManyToManyModelOne, sql_queries=2
@@ -190,7 +190,7 @@ class TestManyToMany(TestCase):
         self.assertEqual(len(data), 3)
 
     def test_it_prefetches_many_to_many_relationships_on_owning_side_with_full_representation(
-        self
+            self
     ):
         data = _run_test(
             ManyOneSerializerOnlyFullRepresentation, ManyToManyModelOne, sql_queries=2
@@ -199,7 +199,7 @@ class TestManyToMany(TestCase):
         self.assertEqual(data[0]["model_two_set"][0]["two_text"], "one one")
 
     def test_it_prefetches_many_to_many_relationships_on_reverse_side_with_only_primary_keys(
-        self
+            self
     ):
         data = _run_test(
             ManyTwoSerializerOnlyPrimaryKey, ManyToManyModelTwo, sql_queries=2
@@ -207,7 +207,7 @@ class TestManyToMany(TestCase):
         self.assertEqual(len(data), 4)
 
     def test_it_prefetches_many_to_many_relationships_on_reverse_side_with_full_representation(
-        self
+            self
     ):
         # One query to fetch ModelTwo
         # One Query to fetch ModelOne
@@ -218,7 +218,6 @@ class TestManyToMany(TestCase):
         self.assertEqual(len(data), 4)
 
     def test_it_prefetches_many_to_many_relationships_when_attached_to_viewset(self):
-
         # Same test as above but just with a viewsetmixin involved
         view = ManyTwoSerializerOnlyFullRepresentationViewSet.as_view(
             actions={"get": "list"}
@@ -305,7 +304,7 @@ class TestManyToOne(TestCase):
         assert len(data[0]["children_b"]) == 3
 
     def test_it_prefetches_foreign_key_relations_from_reverse_side_with_serializer(
-        self
+            self
     ):
         # Need two queries because of prefetch related
         data = _run_test(
@@ -316,7 +315,7 @@ class TestManyToOne(TestCase):
         assert len(data[0]["children_b"]) == 3
 
     def test_it_prefetches_foreign_key_relations_from_reverse_side_with_serializer_that_has_source(
-        self
+            self
     ):
         # Need two queries because of prefetch related
         data = _run_test(
@@ -358,7 +357,76 @@ class TestHyperlinkedIdentityField(TestCase):
         )
 
 
-def _run_test(serializer_cls, model_cls, sql_queries=1) -> ReturnList:
+class TestIncludesAndExcludes(TestCase):
+    def setUp(self):
+        car = ParentCar.objects.create()
+        parent = DeeplyNestedParent.objects.create(car=car)
+        only_child = DeeplyNestedChild.objects.create(parent=parent)
+        SingleChildToy.objects.create(owner=only_child)
+
+        children_set = []
+        for i in range(0, 3):
+            children_set.append(DeeplyNestedChildren.objects.create(parent=parent))
+
+        for child in children_set:
+            for _i in range(0, 2):
+                GrandKids.objects.create(parent=child)
+        for i in range(0, 3):
+            toys = DeeplyNestedChildrenToys.objects.create()
+            toys.owners.set(children_set)
+
+
+    def test_nested_serializer_exclude_field_error_for_string(self):
+        with self.assertRaises(TypeError):
+            data = _run_test(DeeplyNestedParentSerializer, DeeplyNestedParent, sql_queries=0, excluded_fields="car")
+
+    def test_nested_serializer_excludes_field_if_specified_as_list(self):
+        data = _run_test(DeeplyNestedParentSerializer, DeeplyNestedParent, sql_queries=3, excluded_fields=["child", "car"])
+        pprint(data)
+
+
+    # Baseline is 4 queries here
+    class DeeplyNestedParentSerializerWithoutAllChildren(ModelSerializer):
+        class Meta:
+            model = DeeplyNestedParent
+            fields = ["child_method", "children",]
+            depth = 2
+
+        children = SerializerMethodField()
+
+        def get_children(self, obj):
+            pprint(obj)
+
+            #pprint(obj._prefetched_objects_cache)
+            # Do some query here
+            query = list(obj.children_set.all())
+            query = list(obj.children_set.all())
+            print(query)
+            return "123"; # return anything
+
+        child_method = SerializerMethodField()
+
+        def get_child_method(self, obj):
+            pprint(obj)
+
+            # Do some query here
+            query = obj.child
+            print(query)
+            return "123"; # return anything
+
+    def test_nested_serializer_includes_select_field_if_specified_as_set(self):
+        data = _run_test(self.DeeplyNestedParentSerializerWithoutAllChildren, DeeplyNestedParent, sql_queries=3, extra_select_fields={"child"} )
+    
+    # 4 queries without the extra prefetch
+    def test_nested_serializer_includes_prefetch_field_if_specified_as_set(self):
+        data = _run_test(self.DeeplyNestedParentSerializerWithoutAllChildren, DeeplyNestedParent, sql_queries=3, extra_prefetch_fields={"children_set"})
+        pprint(data)
+
+
+def _run_test(serializer_cls, model_cls, sql_queries=1, *,
+              excluded_fields=None,
+              extra_select_fields=None,
+              extra_prefetch_fields=None, ) -> ReturnList:
     """
     Boilerplate for running the tests
     :return: the serializer data to assert one
@@ -371,7 +439,10 @@ def _run_test(serializer_cls, model_cls, sql_queries=1) -> ReturnList:
     request = APIRequestFactory().get("/FOO")
 
     with case.assertNumQueries(sql_queries):
-        prefetched_queryset = prefetch(model_cls.objects.all(), serializer_cls)
+        print(excluded_fields, extra_select_fields, extra_prefetch_fields)
+        prefetched_queryset = prefetch(model_cls.objects.all(), serializer_cls, excluded_fields=excluded_fields,
+                                       extra_select_fields=extra_select_fields,
+                                       extra_prefetch_fields=extra_prefetch_fields)
         serializer_instance = serializer_cls(
             instance=prefetched_queryset, many=True, context={"request": request}
         )
