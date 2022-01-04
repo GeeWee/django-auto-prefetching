@@ -28,6 +28,7 @@ logger.setLevel(logging.WARNING)
 
 SERIALIZER_SOURCE_RELATION_SEPARATOR = '.'
 
+
 class AutoPrefetchViewSetMixin:
     auto_prefetch_excluded_fields = set()
     auto_prefetch_extra_select_fields = set()
@@ -55,16 +56,30 @@ class AutoPrefetchViewSetMixin:
 
 
 def prefetch(
-    queryset,
-    serializer: Type[ModelSerializer],
-    *,
-    excluded_fields=set(),
-    extra_select_fields=set(),
-    extra_prefetch_fields=set(),
+        queryset,
+        serializer: Type[ModelSerializer],
+        *,
+        excluded_fields=None,
+        extra_select_fields=None,
+        extra_prefetch_fields=None,
 ):
+    if not isinstance(excluded_fields, (set, list)) and excluded_fields is not None:
+        raise TypeError(f"excluded_fields must be a list or a set if supplied. Received {type(excluded_fields)}")
+
+    if not isinstance(extra_select_fields, (set, list)) and extra_select_fields is not None:
+        raise TypeError(f"extra_select_fields must be a list or a set if supplied. Received {type(extra_select_fields)}")
+
+    if not isinstance(extra_prefetch_fields, (set, list)) and extra_prefetch_fields is not None:
+        raise TypeError(f"extra_prefetch_fields must be a list or a set if supplied. Received {type(extra_prefetch_fields)}")
+
+    excluded_fields = set() if excluded_fields is None else set(excluded_fields)
+    extra_select_fields = set() if extra_select_fields is None else set(extra_select_fields)
+    extra_prefetch_fields = set() if extra_prefetch_fields is None else set(extra_prefetch_fields)
+
     select_related, prefetch_related = _prefetch(serializer)
     select_related = (select_related | extra_select_fields) - excluded_fields
     prefetch_related = (prefetch_related | extra_prefetch_fields) - excluded_fields
+
     try:
         if select_related:
             queryset = queryset.select_related(*select_related)
@@ -79,7 +94,7 @@ def prefetch(
 
 
 def _prefetch(
-    serializer: Union[Type[BaseSerializer], BaseSerializer], path=None, indentation=0
+        serializer: Union[Type[BaseSerializer], BaseSerializer], path=None, indentation=0
 ):
     """
     Returns prefetch_related, select_related
@@ -118,25 +133,25 @@ def _prefetch(
         )
 
         attribute_type = (
-            hasattr(serializer, "Meta") and 
-            type(getattr(serializer.Meta.model, name, None))
+                hasattr(serializer, "Meta") and
+                type(getattr(serializer.Meta.model, name, None))
         )
         # We potentially need to recurse deeper
         if isinstance(
-            field_instance, (BaseSerializer, RelatedField, ManyRelatedField)
+                field_instance, (BaseSerializer, RelatedField, ManyRelatedField)
         ) and (
-            not isinstance(field_instance, IGNORED_FIELD_TYPES)
+                not isinstance(field_instance, IGNORED_FIELD_TYPES)
         ) and (
-            attribute_type is not property
-            or any(
-                attribute_type is descriptor for descriptor in (
+                attribute_type is not property
+                or any(
+            attribute_type is descriptor for descriptor in (
                     ForwardManyToOneDescriptor,
                     ForwardOneToOneDescriptor,
                     ReverseOneToOneDescriptor,
                     ReverseManyToOneDescriptor,
                     ManyToManyDescriptor,
-                )
             )
+        )
         ):
             logger.debug(
                 f'{" " * indentation}Found related: {field_type_name} ({type(field_instance)}) - recursing deeper'
@@ -176,7 +191,7 @@ def _prefetch(
                 )
                 select_related |= select
                 prefetch_related |= prefetch
-        
+
         elif SERIALIZER_SOURCE_RELATION_SEPARATOR in field_instance.source:
             # The serializer declares a field from a related object.
             relation_name = field_instance.source.split(SERIALIZER_SOURCE_RELATION_SEPARATOR)[0]
@@ -188,10 +203,10 @@ def _prefetch(
 
     return (select_related, prefetch_related)
 
+
 def is_model_relation(model, field_name):
     field = next((field for field in model._meta.fields if field.name == field_name), None)
     return isinstance(field, models.ForeignKey) or isinstance(field, models.OneToOneField)
-
 
 
 IGNORED_FIELD_TYPES = (

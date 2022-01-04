@@ -48,6 +48,29 @@ class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelVi
             return django_auto_prefetching.prefetch(queryset, self.serializer_class)
 ```
 
+## Manually specifying which fields are needed
+
+If you need to explicitly specify some extra fields to be included or excluded, you can also override the following methods on your ViewSet to return a list or a set of fields to prefetch/exclude.
+
+```python
+import django_auto_prefetching
+from rest_framework.viewsets import ModelViewSet
+
+class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelViewSet):
+    serializer_class = YourModelSerializer
+
+    def get_auto_prefetch_excluded_fields(self):
+        return {"exclude_this_field", "and_this_field"}
+    
+    def get_auto_prefetch_extra_select_fields(self):
+        return {"select_related_on_this_field"}
+
+    def get_auto_prefetch_extra_prefetch_fields(self):
+        return {"prefetch_related_on_this_field"}
+}
+```
+
+
 ## Supported Versions
 Currently the project is currently being tested against Python 3.7 and 3.8 and Django 3.2
 Pull Requests to support other versions are welcome.
