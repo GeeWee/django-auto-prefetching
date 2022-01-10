@@ -80,6 +80,9 @@ def prefetch(
     select_related = (select_related | extra_select_fields) - excluded_fields
     prefetch_related = (prefetch_related | extra_prefetch_fields) - excluded_fields
 
+    select_related = [s.replace('.', '__') for s in select_related]
+    prefetch_related = [s.replace('.', '__') for s in prefetch_related]
+
     try:
         if select_related:
             queryset = queryset.select_related(*select_related)
