@@ -17,7 +17,6 @@ from django.db.models.fields.related_descriptors import (
 from rest_framework.relations import (
     RelatedField,
     ManyRelatedField,
-    HyperlinkedIdentityField,
     HyperlinkedRelatedField,
 )
 from rest_framework.serializers import ModelSerializer, BaseSerializer, ListSerializer
