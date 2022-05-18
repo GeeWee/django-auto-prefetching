@@ -72,7 +72,7 @@ class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelVi
 
 
 ## Supported Versions
-Currently the project is being tested against Python 3.7 and 3.8 and Django 3.2. <br>
+Currently the project is being tested against Python 3.7 and 3.8 and Django 3.2.<br>
 Pull Requests to support other versions are welcome.
 
 ## Maturity
@@ -81,7 +81,7 @@ The project is currently being used without issues in a medium-sized Django proj
 ## Contributing
 Contributions are welcome! To get the tests running, do the following:
 - Clone the repository.
-- If you don't have it, install [pipenv](https://docs.pipenv.org/en/latest/install/#installing-pipenv)
+- If you don't have it, install [pipenv](https://pipenv.pypa.io/en/latest/#install-pipenv-today)
 - Install the dependencies with `pipenv sync --dev`
 - Activate the virtualenv created by pipenv by writing `pipenv shell`
 - Run the tests with `./manage.py test`   
