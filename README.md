@@ -73,7 +73,7 @@ class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelVi
 
 ## Supported Versions
 
-Python: 3.7, 3.8, 3.10
+Python: 3.7, 3.8, 3.10<br>
 Django: 3.2, 4.0.4
 
 Pull Requests to support other versions are welcome.
