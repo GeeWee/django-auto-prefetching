@@ -1,55 +1,36 @@
 import logging
-from json import loads, dumps
+from json import dumps, loads
 from pprint import pprint
-from django.db.models.query import prefetch_related_objects
 
 from django.test import TestCase
+from django_auto_prefetching import prefetch
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework.test import APIRequestFactory
 from rest_framework.utils.serializer_helpers import ReturnList
-
-from django_auto_prefetching import prefetch
+from test_project.models import (ChildA, ChildABro, ChildB, DeeplyNestedChild,
+                                 DeeplyNestedChildren,
+                                 DeeplyNestedChildrenToys, DeeplyNestedParent,
+                                 GrandKids, ManyToManyModelOne,
+                                 ManyToManyModelTwo, ParentCar, SingleChildToy,
+                                 TopLevel)
 from test_project.serializers.child_a_serializer import (
-    ChildASerializer,
-    ChildABrotherSerializerWithBrother,
-    ChildASerializerWithNoRelations,
-)
+    ChildABrotherSerializerWithBrother, ChildASerializer,
+    ChildASerializerWithNoRelations)
 from test_project.serializers.child_b_serializers import (
-    ChildBSerializer,
-    ChildBSerializerWithSlug,
-    ChildBSerializerWithNestedSerializer,
+    ChildBSerializer, ChildBSerializerWithDottedPropertyAccess,
     ChildBSerializerWithNestedRenamedSerializer,
-    ChildBSerializerWithDottedPropertyAccess,
-)
+    ChildBSerializerWithNestedSerializer, ChildBSerializerWithSlug)
 from test_project.serializers.many_to_many_serializer import (
-    ManyOneSerializerOnlyPrimaryKey,
-    ManyOneSerializerOnlyFullRepresentation,
-    ManyTwoSerializerOnlyPrimaryKey,
-    ManyTwoSerializerOnlyFullRepresentation,
-)
-from test_project.models import (
-    ChildA,
-    TopLevel,
-    ChildB,
-    ChildABro,
-    ManyToManyModelOne,
-    ManyToManyModelTwo,
-    DeeplyNestedParent,
-    DeeplyNestedChild,
-    DeeplyNestedChildren,
-    GrandKids,
-    DeeplyNestedChildrenToys,
-    SingleChildToy,
-    ParentCar,
-)
-from test_project.serializers.nested_serializer import DeeplyNestedParentSerializer
+    ManyOneSerializerOnlyFullRepresentation, ManyOneSerializerOnlyPrimaryKey,
+    ManyTwoSerializerOnlyFullRepresentation, ManyTwoSerializerOnlyPrimaryKey)
+from test_project.serializers.nested_serializer import \
+    DeeplyNestedParentSerializer
 from test_project.serializers.top_level_serializer import (
     TopLevelSerializerWithChildren,
-    TopLevelSerializerWithNestedSerializer,
-    TopLevelSerializerWithNestedSerializerWithSource,
     TopLevelSerializerWithHyperlinkedIdentityField,
-)
+    TopLevelSerializerWithNestedSerializer,
+    TopLevelSerializerWithNestedSerializerWithSource)
 from test_project.views import ManyTwoSerializerOnlyFullRepresentationViewSet
 
 logger = logging.getLogger("django-auto-prefetching")

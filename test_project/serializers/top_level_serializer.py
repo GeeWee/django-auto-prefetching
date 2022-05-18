@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from rest_framework.viewsets import ModelViewSet
-
-from test_project.models import ChildA, ChildB, TopLevel
+from test_project.models import ChildB, TopLevel
 
 
 class _ChildrenBSerializer(ModelSerializer):
