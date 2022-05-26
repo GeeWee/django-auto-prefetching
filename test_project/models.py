@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 
 class ChildA(models.Model):
     childA_text = models.TextField()

@@ -1,14 +1,5 @@
-from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from rest_framework.viewsets import ModelViewSet
-
-from test_project.models import (
-    ChildA,
-    ChildB,
-    TopLevel,
-    ManyToManyModelOne,
-    ManyToManyModelTwo,
-)
+from test_project.models import ManyToManyModelOne, ManyToManyModelTwo
 
 
 class ManyOneSerializerOnlyPrimaryKey(ModelSerializer):
