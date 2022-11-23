@@ -42,9 +42,12 @@ class AutoPrefetchViewSetMixin:
     def get_auto_prefetch_extra_prefetch_fields(self):
         return self.auto_prefetch_extra_prefetch_fields
 
+    def get_prefetchable_queryset(self):
+        return super().get_queryset()
+
     def get_queryset(self):
         serializer = self.get_serializer()
-        qs = super().get_queryset()
+        qs = self.get_prefetchable_queryset()
 
         kwargs = {
             "excluded_fields": self.get_auto_prefetch_excluded_fields(),
