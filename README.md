@@ -47,6 +47,18 @@ class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelVi
         queryset = queryset.select_related('my_extra_field')
         return django_auto_prefetching.prefetch(queryset, self.serializer_class)
 ```
+You can override `get_prefetchable_queryset` instead of `get_queryset` if you don't want to manually call `django_auto_prefetching.prefetch()`. Example:
+```python
+import django_auto_prefetching
+from rest_framework.viewsets import ModelViewSet
+
+class BaseModelViewSet(django_auto_prefetching.AutoPrefetchViewSetMixin, ModelViewSet):
+    serializer_class = YourModelSerializer
+    
+    def get_prefetchable_queryset(self):
+        return YourModel.objects.all()
+```
+Now `get_queryset()` will call our `get_prefetchable_queryset()` and will add automatic prefetches
 
 ## Manually specifying which fields are needed
 
