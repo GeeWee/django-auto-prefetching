@@ -36,3 +36,9 @@ class RightQuerySetOverride(AutoPrefetchViewSetMixin, ModelViewSet):
     def get_queryset(self):
         qs = ChildA.objects.all()
         return django_auto_prefetching.prefetch(qs, self.serializer_class)
+
+class GetPrefetchableQuerysetOverride(AutoPrefetchViewSetMixin, ModelViewSet):
+    serializer_class = ChildASerializer
+
+    def get_prefetchable_queryset(self):
+        return ChildA.objects.filter(childA_text='text_1')
