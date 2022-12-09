@@ -137,6 +137,13 @@ def _prefetch(
             f'{" " * indentation} Field "{name}", type: {field_type_name}, src: "{field_instance.source}"'
         )
 
+        # Skip the field if it's write-only
+        if getattr(field_instance, "write_only", False):
+            logger.debug(
+                f'{" " * indentation} Field "{name}", type: {field_type_name} skipped because the write_only is True"'
+            )
+            continue
+
         attribute_type = (
                 hasattr(serializer, "Meta") and
                 type(getattr(serializer.Meta.model, name, None))
